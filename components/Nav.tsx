@@ -1,6 +1,27 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { fonts } from "@/lib/fonts";
+import styles from "./Nav.module.css";
+
+const links = [
+  { href: "#work", label: "work" },
+  { href: "#systems", label: "systems" },
+  { href: "#stack", label: "stack" },
+];
 
 export default function Nav() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isOpen]);
+
   return (
     <nav
       style={{
@@ -29,39 +50,61 @@ export default function Nav() {
         <span style={{ color: "#565b63" }}>.</span>
         bromand
       </div>
-      <div
-        style={{
-          display: "flex",
-          gap: 28,
-          alignItems: "center",
-          fontFamily: fonts.mono,
-          fontSize: 13,
-        }}
-      >
-        <a href="#work" style={{ color: "#8b9199" }}>
-          work
-        </a>
-        <a href="#systems" style={{ color: "#8b9199" }}>
-          systems
-        </a>
-        <a href="#stack" style={{ color: "#8b9199" }}>
-          stack
-        </a>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <div
+          id="nav-links-panel"
+          className={isOpen ? styles.linksOpen : styles.links}
+          style={{ fontFamily: fonts.mono, fontSize: 13 }}
+        >
+          {links.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              style={{ color: "#8b9199" }}
+              onClick={() => setIsOpen(false)}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+
         <a
           href="#contact"
+          className={styles.hireMe}
           style={{
             display: "inline-flex",
             alignItems: "center",
             gap: 7,
             color: "#0a0b0d",
             background: "#7ee787",
-            padding: "7px 14px",
             borderRadius: 6,
             fontWeight: 600,
+            fontFamily: fonts.mono,
+            fontSize: 13,
           }}
         >
           hire me
         </a>
+
+        <button
+          type="button"
+          className={styles.hamburger}
+          onClick={() => setIsOpen((v) => !v)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={isOpen}
+          aria-controls="nav-links-panel"
+          style={{
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            color: "#e6e8eb",
+            fontSize: 20,
+            lineHeight: 1,
+          }}
+        >
+          {isOpen ? "✕" : "☰"}
+        </button>
       </div>
     </nav>
   );

@@ -3,13 +3,14 @@ import { endpoints, methodStyles } from "@/data/portfolio";
 import { codeFilename, codeLines } from "@/data/codeSnippet";
 import SectionHeading from "./SectionHeading";
 import CodeBlock from "./CodeBlock";
+import styles from "./ApiShowcase.module.css";
 
 export default function ApiShowcase() {
   return (
     <section style={{ padding: "72px 0 24px" }}>
       <SectionHeading index="03" title="API, up close" />
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, alignItems: "start" }}>
+      <div className={styles.grid}>
         {/* endpoints */}
         <div
           style={{
@@ -35,6 +36,7 @@ export default function ApiShowcase() {
             return (
               <div
                 key={i}
+                className={styles.row}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -58,10 +60,23 @@ export default function ApiShowcase() {
                 >
                   {e.method}
                 </span>
-                <span style={{ fontFamily: fonts.mono, fontSize: 13, color: "#c4c9cf", flex: 1 }}>
+                <span
+                  style={{
+                    fontFamily: fonts.mono,
+                    fontSize: 13,
+                    color: "#c4c9cf",
+                    flex: 1,
+                    minWidth: 0,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
                   {e.path}
                 </span>
-                <span style={{ fontSize: 12, color: "#565b63" }}>{e.note}</span>
+                <span className={styles.note} style={{ fontSize: 12, color: "#565b63" }}>
+                  {e.note}
+                </span>
               </div>
             );
           })}

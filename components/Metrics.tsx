@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { fonts } from "@/lib/fonts";
 import { metricTargets } from "@/data/portfolio";
+import styles from "./Metrics.module.css";
 
 interface MetricsState {
   reqs: number;
@@ -50,7 +51,7 @@ const statLabelStyle: React.CSSProperties = {
 const statValueStyle: React.CSSProperties = {
   fontFamily: fonts.display,
   fontWeight: 600,
-  fontSize: 40,
+  fontSize: "clamp(26px, 8vw, 40px)",
   color: "#f4f6f7",
   lineHeight: 1,
   letterSpacing: "-0.02em",
@@ -60,11 +61,6 @@ const statSubStyle: React.CSSProperties = {
   fontSize: 13,
   color: "#6b7178",
   marginTop: 8,
-};
-
-const statCardStyle: React.CSSProperties = {
-  background: "#0d0f12",
-  padding: "28px 26px",
 };
 
 export default function Metrics() {
@@ -127,24 +123,14 @@ export default function Metrics() {
 
   return (
     <section style={{ padding: "8px 0 64px" }}>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4,1fr)",
-          gap: 1,
-          background: "rgba(255,255,255,0.07)",
-          border: "1px solid rgba(255,255,255,0.07)",
-          borderRadius: 14,
-          overflow: "hidden",
-        }}
-      >
-        <div style={statCardStyle}>
+      <div className={styles.grid}>
+        <div className={styles.card}>
           <div style={statLabelStyle}>Requests / day</div>
           <div style={statValueStyle}>{reqsText}</div>
           <div style={statSubStyle}>across owned services</div>
         </div>
 
-        <div style={statCardStyle}>
+        <div className={styles.card}>
           <div
             style={{
               ...statLabelStyle,
@@ -185,7 +171,7 @@ export default function Metrics() {
           </svg>
         </div>
 
-        <div style={statCardStyle}>
+        <div className={styles.card}>
           <div style={statLabelStyle}>Uptime (12mo)</div>
           <div style={statValueStyle}>
             {uptimeText}
@@ -194,7 +180,7 @@ export default function Metrics() {
           <div style={statSubStyle}>rolling SLO across prod</div>
         </div>
 
-        <div style={statCardStyle}>
+        <div className={styles.card}>
           <div style={statLabelStyle}>Services owned</div>
           <div style={statValueStyle}>{servicesText}</div>
           <div style={statSubStyle}>from schema to on-call</div>

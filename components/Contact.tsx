@@ -1,14 +1,15 @@
 import { fonts } from "@/lib/fonts";
+import styles from "./Contact.module.css";
 
 export default function Contact() {
   return (
     <section id="contact" style={{ padding: "72px 0 40px" }}>
       <div
+        className={styles.card}
         style={{
           background: "#0d0f12",
           border: "1px solid rgba(255,255,255,0.07)",
           borderRadius: 18,
-          padding: "56px 48px",
           textAlign: "center",
           position: "relative",
           overflow: "hidden",
@@ -49,7 +50,6 @@ export default function Contact() {
               target="_blank"
               style={{
                 display: "inline-flex",
-                
                 alignItems: "center",
                 gap: 9,
                 background: "#7ee787",
@@ -58,6 +58,7 @@ export default function Contact() {
                 borderRadius: 9,
                 fontWeight: 600,
                 fontSize: 15,
+                wordBreak: "break-word",
               }}
             >
               elyasbromand3@gmail.com

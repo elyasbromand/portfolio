@@ -26,7 +26,7 @@ export default function SectionHeading({ index, title }: SectionHeadingProps) {
         style={{
           fontFamily: fonts.display,
           fontWeight: 600,
-          fontSize: 26,
+          fontSize: "clamp(20px, 5vw, 26px)",
           color: "#f4f6f7",
           letterSpacing: "-0.02em",
         }}

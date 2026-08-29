@@ -1,0 +1,51 @@
+.panel {
+  background: #0d0f12;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 34px 32px;
+}
+
+.flowRow {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.stage {
+  display: flex;
+  align-items: stretch;
+}
+
+.arrow {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  color: #565b63;
+}
+
+@media (max-width: 640px) {
+  .panel {
+    padding: 22px 16px;
+  }
+
+  .flowRow {
+    flex-direction: column;
+    overflow-x: visible;
+    gap: 10px;
+    padding-bottom: 0;
+  }
+
+  .stage {
+    flex-direction: column;
+  }
+
+  .arrow {
+    transform: rotate(90deg);
+    align-self: center;
+    padding: 4px 0;
+  }
+}

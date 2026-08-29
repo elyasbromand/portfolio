@@ -9,7 +9,7 @@ export default function SelectedWork() {
     <section id="work" style={{ padding: "56px 0 24px" }}>
       <SectionHeading index="01" title="Selected work" />
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 18 }}>
+      <div className={styles.grid}>
         {projects.map((p) => (
           <Link key={p.tag} href={`/work/${p.tag}`} className={styles.card}>
             <div
@@ -83,6 +83,7 @@ export default function SelectedWork() {
             <div
               style={{
                 display: "flex",
+                flexWrap: "wrap",
                 gap: 22,
                 paddingTop: 16,
                 borderTop: "1px solid rgba(255,255,255,0.06)",

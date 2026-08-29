@@ -1,3 +1,9 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
 .card {
   display: block;
   background: #0d0f12;
@@ -12,4 +18,16 @@
 .card:hover {
   border-color: rgba(126, 231, 135, 0.28);
   transform: translateY(-3px);
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: 20px 18px 18px;
+  }
 }

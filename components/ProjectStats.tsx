@@ -18,7 +18,7 @@ function StatCard({ stat }: { stat: StatValue }) {
         style={{
           fontFamily: fonts.display,
           fontWeight: 600,
-          fontSize: 34,
+          fontSize: "clamp(24px, 7vw, 34px)",
           color: "#f4f6f7",
           lineHeight: 1,
           letterSpacing: "-0.02em",
@@ -37,7 +37,7 @@ export default function ProjectStats({ stats }: ProjectStatsProps) {
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: `repeat(${stats.length}, 1fr)`,
+        gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
         gap: 1,
         background: "rgba(255,255,255,0.07)",
         border: "1px solid rgba(255,255,255,0.07)",

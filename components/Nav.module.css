@@ -1,0 +1,51 @@
+.links {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+
+.hamburger {
+  display: none;
+}
+
+.hireMe {
+  padding: 7px 14px;
+}
+
+@media (max-width: 640px) {
+  .links {
+    display: none;
+  }
+
+  .linksOpen {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #0a0b0d;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    padding: 20px 24px;
+    gap: 4px;
+    z-index: 20;
+  }
+
+  .linksOpen a {
+    display: block;
+    width: 100%;
+    padding: 12px 4px;
+  }
+
+  .hamburger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+  }
+
+  .hireMe {
+    padding: 11px 16px;
+  }
+}

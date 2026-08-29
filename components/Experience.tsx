@@ -1,6 +1,7 @@
 import { fonts } from "@/lib/fonts";
 import { experience } from "@/data/portfolio";
 import SectionHeading from "./SectionHeading";
+import styles from "./Experience.module.css";
 
 export default function Experience() {
   return (
@@ -11,13 +12,8 @@ export default function Experience() {
         {experience.map((x, i) => (
           <div
             key={i}
-            style={{
-              display: "grid",
-              gridTemplateColumns: "150px 1fr",
-              gap: 28,
-              padding: "24px 0",
-              borderTop: "1px solid rgba(255,255,255,0.07)",
-            }}
+            className={styles.row}
+            style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}
           >
             <div style={{ fontFamily: fonts.mono, fontSize: 13, color: "#6b7178", paddingTop: 3 }}>
               {x.period}

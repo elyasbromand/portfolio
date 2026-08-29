@@ -13,6 +13,8 @@ export default function ProjectHeader({ project }: ProjectHeaderProps) {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 8,
           marginBottom: 20,
         }}
       >

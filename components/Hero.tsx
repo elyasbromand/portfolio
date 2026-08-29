@@ -1,16 +1,9 @@
 import { fonts } from "@/lib/fonts";
+import styles from "./Hero.module.css";
 
 export default function Hero() {
   return (
-    <header
-      style={{
-        display: "grid",
-        gridTemplateColumns: "1.35fr 0.9fr",
-        gap: 56,
-        alignItems: "center",
-        padding: "88px 0 72px",
-      }}
-    >
+    <header className={styles.grid}>
       <div>
         <div
           style={{
@@ -118,7 +111,7 @@ export default function Hero() {
       </div>
 
       {/* PORTRAIT */}
-      <div style={{ position: "relative", justifySelf: "end", width: "100%", maxWidth: 340 }}>
+      <div className={styles.portrait} style={{ position: "relative", width: "100%", maxWidth: 340 }}>
         <div
           style={{
             position: "absolute",
