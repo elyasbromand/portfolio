@@ -266,31 +266,6 @@ export const principles: Principle[] = [
   { t: "Idempotent writes", d: "Every mutation is safe to retry — replays are no-ops." },
 ];
 
-export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-
-export interface Endpoint {
-  method: HttpMethod;
-  path: string;
-  note: string;
-}
-
-export const endpoints: Endpoint[] = [
-  { method: "POST", path: "/v2/transfers", note: "idempotent" },
-  { method: "GET", path: "/v2/accounts/:id", note: "cached 5s" },
-  { method: "GET", path: "/v2/accounts/:id/ledger", note: "paginated" },
-  { method: "POST", path: "/v2/reversals", note: "audited" },
-  { method: "DELETE", path: "/v2/holds/:id", note: "soft" },
-];
-
-/** Method badge color + background, keyed by HTTP verb. */
-export const methodStyles: Record<HttpMethod, { color: string; background: string }> = {
-  GET: { color: "#7ee787", background: "rgba(126,231,135,0.1)" },
-  POST: { color: "#79c0ff", background: "rgba(121,192,255,0.1)" },
-  PUT: { color: "#f0b849", background: "rgba(240,184,73,0.1)" },
-  DELETE: { color: "#f2777a", background: "rgba(242,119,122,0.1)" },
-  PATCH: { color: "#f0b849", background: "rgba(240,184,73,0.1)" },
-};
-
 export interface StackGroup {
   label: string;
   items: string[];

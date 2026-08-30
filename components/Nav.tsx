@@ -84,7 +84,7 @@ export default function Nav() {
             fontSize: 13,
           }}
         >
-          hire me
+          let&apos;s connect
         </a>
 
         <button

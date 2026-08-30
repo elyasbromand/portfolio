@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { fonts } from "@/lib/fonts";
 import styles from "./Hero.module.css";
 
@@ -57,8 +58,7 @@ export default function Hero() {
           }}
         >
           Elyas Bromand — backend engineer focused on AI integration,
-          distributed services, and low-latency APIs. I care about the boring
-          parts: correctness, observability, and scalability.
+          distributed services, and low-latency APIs. I care about correctness, observability, and scalability.
         </p>
 
         <p
@@ -69,7 +69,7 @@ export default function Hero() {
             marginBottom: 40,
           }}
         >
-          // Information Systems, 7th semester · Kabul Polytechnic University
+          // Information Systems, Senior Student · Kabul Polytechnic University
         </p>
 
         <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
@@ -132,27 +132,14 @@ export default function Hero() {
             background: "#0d0f12",
           }}
         >
-          {/*
-            Placeholder for Elyas's photo — swap for a real <Image> once one
-            is available, e.g.:
-            <Image src="/portrait.jpg" alt="Elyas Bromand" fill style={{ objectFit: "cover" }} />
-          */}
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              textAlign: "center",
-              padding: 24,
-              fontFamily: fonts.mono,
-              fontSize: 13,
-              color: "#565b63",
-            }}
-          >
-            Drop Elyas&apos;s photo
-          </div>
+          <Image
+            src="/portrait.jpeg"
+            alt="Elyas Bromand"
+            fill
+            priority
+            sizes="(max-width: 640px) 100vw, 340px"
+            style={{ objectFit: "cover" }}
+          />
         </div>
         <div
           style={{

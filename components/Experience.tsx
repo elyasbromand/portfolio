@@ -6,7 +6,7 @@ import styles from "./Experience.module.css";
 export default function Experience() {
   return (
     <section style={{ padding: "72px 0 24px" }}>
-      <SectionHeading index="05" title="Experience" />
+      <SectionHeading index="04" title="Experience" />
 
       <div style={{ display: "flex", flexDirection: "column" }}>
         {experience.map((x, i) => (
