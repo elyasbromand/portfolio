@@ -7,13 +7,16 @@ import Systems from "@/components/Systems";
 import Toolbox from "@/components/Toolbox";
 import Experience from "@/components/Experience";
 import Contact from "@/components/Contact";
+import { getGithubStats } from "@/lib/github";
 
-export default function Home() {
+export default async function Home() {
+  const githubStats = await getGithubStats("elyasbromand");
+
   return (
     <PageShell>
       <Nav />
       <Hero />
-      <Metrics />
+      <Metrics stats={githubStats} />
       <SelectedWork />
       <Systems />
       <Toolbox />

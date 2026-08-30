@@ -314,10 +314,19 @@ export const experience: ExperienceItem[] = [
   },
 ];
 
-/** Targets the metrics strip counts up to on mount. */
-export const metricTargets = {
-  reqs: 2_400_000,
-  p99: 42,
-  uptime: 99.98,
-  services: 12,
+export interface Hackathon {
+  project: string;
+  host: string;
+  challenge: string;
+  result: string;
+  description: string;
+}
+
+export const hackathon: Hackathon = {
+  project: "Nura",
+  host: "DevPost — GitHub Readme Generation Hackathon",
+  challenge: "UN SDG 3: Good Health & Well-being",
+  result: "Winner",
+  description:
+    "Nura helps community health workers — often the person closest to a pregnant woman, newborn, or vulnerable patient in underserved communities — recognize maternal and newborn health risks early, act on them, and route referrals to the right people in time.",
 };
