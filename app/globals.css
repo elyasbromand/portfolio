@@ -36,6 +36,29 @@ a:hover {
   }
 }
 
+@keyframes sparkDraw {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  35% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes sparkDotIn {
+  0%,
+  30% {
+    opacity: 0;
+  }
+  40%,
+  100% {
+    opacity: 1;
+  }
+}
+
 @keyframes riseIn {
   from {
     opacity: 0;

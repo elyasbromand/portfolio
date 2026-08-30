@@ -19,19 +19,21 @@ interface CountState {
 const SPARK_VIEWBOX_WIDTH = 260;
 const SPARK_VIEWBOX_HEIGHT = 44;
 
-function buildSparkPoints(spark: number[]): string {
-  if (spark.length < 2) return "";
+interface SparkPoint {
+  x: number;
+  y: number;
+}
+
+function buildSparkPoints(spark: number[]): SparkPoint[] {
+  if (spark.length < 2) return [];
   const min = Math.min(...spark);
   const max = Math.max(...spark);
   const range = max - min || 1;
   const n = spark.length;
-  return spark
-    .map((v, i) => {
-      const x = (i / (n - 1)) * SPARK_VIEWBOX_WIDTH;
-      const y = SPARK_VIEWBOX_HEIGHT - 2 - ((v - min) / range) * 38;
-      return `${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(" ");
+  return spark.map((v, i) => ({
+    x: (i / (n - 1)) * SPARK_VIEWBOX_WIDTH,
+    y: SPARK_VIEWBOX_HEIGHT - 2 - ((v - min) / range) * 38,
+  }));
 }
 
 const statLabelStyle: React.CSSProperties = {
@@ -64,7 +66,6 @@ export default function Metrics({ stats }: MetricsProps) {
     starsEarned: 0,
     contributions: 0,
   });
-
   useEffect(() => {
     const duration = 1400;
     const start = performance.now();
@@ -98,22 +99,53 @@ export default function Metrics({ stats }: MetricsProps) {
         </div>
 
         <div className={styles.card}>
-          <div style={statLabelStyle}>Contributions</div>
+          <div
+            style={{
+              ...statLabelStyle,
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            Contributions
+            <span
+              title="refreshed hourly from GitHub"
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                background: "#7ee787",
+                animation: "blink 1.6s infinite",
+              }}
+            />
+          </div>
           <div style={statValueStyle}>{Math.round(count.contributions)}</div>
-          {sparkPoints ? (
+          {sparkPoints.length ? (
             <svg
               viewBox={`0 0 ${SPARK_VIEWBOX_WIDTH} ${SPARK_VIEWBOX_HEIGHT}`}
               preserveAspectRatio="none"
               style={{ width: "100%", height: 32, marginTop: 12, display: "block" }}
             >
               <polyline
-                points={sparkPoints}
+                points={sparkPoints.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ")}
                 fill="none"
                 stroke="#7ee787"
                 strokeWidth={1.6}
                 strokeLinejoin="round"
                 strokeLinecap="round"
                 opacity={0.9}
+                pathLength={100}
+                style={{
+                  strokeDasharray: 100,
+                  animation: "sparkDraw 4s ease-out infinite",
+                }}
+              />
+              <circle
+                cx={sparkPoints[sparkPoints.length - 1].x}
+                cy={sparkPoints[sparkPoints.length - 1].y}
+                r={2.6}
+                fill="#7ee787"
+                style={{ animation: "blink 1.6s infinite, sparkDotIn 4s ease-out infinite" }}
               />
             </svg>
           ) : (
