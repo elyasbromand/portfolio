@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { fonts } from "@/lib/fonts";
 import styles from "./Nav.module.css";
 
 const links = [
-  { href: "#work", label: "work" },
-  { href: "#systems", label: "systems" },
-  { href: "#stack", label: "stack" },
+  { href: "/#work", label: "work" },
+  { href: "/#systems", label: "systems" },
+  { href: "/#stack", label: "stack" },
 ];
 
 export default function Nav() {
@@ -58,19 +59,19 @@ export default function Nav() {
           style={{ fontFamily: fonts.mono, fontSize: 13 }}
         >
           {links.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               style={{ color: "#8b9199" }}
               onClick={() => setIsOpen(false)}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
 
-        <a
-          href="#contact"
+        <Link
+          href="/#contact"
           className={styles.hireMe}
           style={{
             display: "inline-flex",
@@ -85,7 +86,7 @@ export default function Nav() {
           }}
         >
           let&apos;s connect
-        </a>
+        </Link>
 
         <button
           type="button"
