@@ -386,10 +386,10 @@ export const projects: Project[] = [
       "Every request identifies itself with a real user-agent, respects an 8-second timeout, and retries 429/5xx up to 3 times with exponential backoff plus jitter (honoring Retry-After when present) instead of hammering the site in lockstep.",
     ],
     stats: [
-      { value: 60, label: "book records extracted" },
-      { value: 219, suffix: "x", label: "faster on a warm cache" },
-      { value: 0, label: "invalid records across 60" },
-      { value: 3, label: "max retries with backoff" },
+      { value: 8, suffix: "s", label: "per-request timeout" },
+      { value: 1, suffix: "s", label: "base backoff delay" },
+      { value: 30, suffix: "%", label: "backoff jitter" },
+      { value: 500, suffix: "ms", label: "delay between requests" },
     ],
     architecture: {
       caption: "// how a page becomes a validated record",
