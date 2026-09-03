@@ -248,6 +248,120 @@ export const projects: Project[] = [
       ],
     },
   },
+  {
+    tag: "mcp-file-manager",
+    status: "beta",
+    name: "MCP File Manager",
+    desc: "A terminal-native MCP client and server pair that lets Gemini read, write, and clean up files in any directory — no copy-pasting code into a browser chatbot.",
+    stack: ["Python", "FastMCP", "MCP SDK", "Google Gemini API"],
+    m1v: "5",
+    m1l: "MCP tools exposed",
+    m2v: "3",
+    m2l: "retries before fallback",
+
+    github: "https://github.com/elyasbromand/mcp-file-manager",
+    tagline:
+      "A local MCP client/server pair that gives an LLM safe, tool-mediated access to your filesystem, straight from the terminal.",
+    problem:
+      "Getting an LLM's help on a piece of code usually meant copying it out of my editor and pasting it into a browser tab, losing directory context and repeating the round trip for every file. I wanted Gemini to read, summarize, and clean up code directly from the filesystem I was already working in without leaving the terminal — and to do it over a protocol a client other than mine could reuse, instead of a one-off script wired straight to an API.",
+    approach:
+      "I built both sides of the exchange: an MCP server (FastMCP) exposing five filesystem tools — list_directory, read_file, write_file, delete_file, update_file — a file:// resource for attaching file contents, and two prompts (summarize_file, clean_up_code); and an MCP client that spawns the server as a subprocess over stdio, forwards its tool schema to Gemini as function declarations, and drives the resulting tool-call loop — executing whichever tool Gemini requests and feeding the result back until it returns a final answer. The part that took real engineering was resilience: Gemini calls sometimes fail outright and sometimes hang, so I split failures into retryable ServerErrors (exponential backoff, three attempts) versus terminal ClientErrors (fail fast), and made both fall back gracefully to the next prompt instead of taking the whole session down.",
+    results: [
+      "Classified Gemini API failures into retryable (ServerError, exponential backoff, 3 attempts) versus terminal (ClientError, fail fast) so an overloaded or slow model never crashes the chat session — it falls back to the next prompt instead.",
+      "Exposes 5 filesystem tools, 1 dynamic file:// resource, and 2 LLM-driven prompts (summarize_file, clean_up_code) through the standard MCP tool-calling protocol, so any MCP-compatible client can drive it, not just this one.",
+      "Replaced copy-pasting code into a browser chatbot with a single @filename mention that attaches the file as a resource directly in the terminal.",
+    ],
+    stats: [
+      { value: 5, label: "MCP tools exposed" },
+      { value: 3, label: "retries before graceful fallback" },
+      { value: 2, label: "LLM-driven prompts" },
+      { value: 1, label: "dynamic file resource" },
+    ],
+    architecture: {
+      caption: "// how a request flows through mcp-file-manager",
+      stages: [
+        { nodes: [{ label: "user", sublabel: "chat loop" }] },
+        { nodes: [{ label: "MCP client", sublabel: "Gemini function calling", accent: true }] },
+        { nodes: [{ label: "Gemini API", sublabel: "function calling" }] },
+        { nodes: [{ label: "MCP server", sublabel: "JSON-RPC over stdio" }] },
+        {
+          nodes: [
+            { label: "tools", sublabel: "list / read / write / delete / update" },
+            { label: "resources", sublabel: "file:// via @" },
+            { label: "prompts", sublabel: "summarize / cleanup via /" },
+          ],
+        },
+      ],
+    },
+    terminalLog: [
+      "$ python client.py",
+      "Connected to server. 5 tools available:",
+      "  - list_directory",
+      "  - read_file",
+      "  - write_file",
+      "  - delete_file",
+      "  - update_file",
+      "You: /summarize_file server.py",
+      "  [tool call] read_file({'path': 'server.py'})",
+      "  [tool result] import os\\n\\nfrom mcp.server.fastmcp import FastMCP...",
+      "Gemini: This file defines an MCP server exposing 5 filesystem tools,",
+      "1 file:// resource, and 2 prompts (summarize_file, clean_up_code).",
+      "# on a Gemini 503, retries 3x with backoff before falling back gracefully",
+    ],
+    codeSnippet: {
+      filename: "client.py",
+      lines: [
+        [{ text: "# retry Gemini calls, but never crash the chat loop", color: "#6b7178" }],
+        [
+          { text: "async def", color: "#79c0ff" },
+          { text: " " },
+          { text: "_call_gemini", color: "#d2a8ff" },
+          { text: "(self, contents):" },
+        ],
+        [
+          { text: "    for", color: "#79c0ff" },
+          { text: " attempt in " },
+          { text: "range", color: "#d2a8ff" },
+          { text: "(1, MAX_ATTEMPTS + 1):" },
+        ],
+        [{ text: "        try", color: "#79c0ff" }, { text: ":" }],
+        [
+          { text: "            return", color: "#79c0ff" },
+          { text: " self.genai_client.models." },
+          { text: "generate_content", color: "#d2a8ff" },
+          { text: "(...)" },
+        ],
+        [
+          { text: "        except", color: "#79c0ff" },
+          { text: " ServerError as e:" },
+        ],
+        [
+          { text: "            if", color: "#79c0ff" },
+          { text: " attempt == MAX_ATTEMPTS:" },
+        ],
+        [
+          { text: "                return", color: "#79c0ff" },
+          { text: " " },
+          { text: "None", color: "#7ee787" },
+          { text: "  # give up, fall back to the prompt", color: "#6b7178" },
+        ],
+        [
+          { text: "            await", color: "#79c0ff" },
+          { text: " asyncio.sleep(2 ** attempt)" },
+        ],
+        [
+          { text: "        except", color: "#79c0ff" },
+          { text: " ClientError as e:" },
+        ],
+        [
+          { text: "            return", color: "#79c0ff" },
+          { text: " " },
+          { text: "None", color: "#7ee787" },
+          { text: "  # not retryable", color: "#6b7178" },
+        ],
+      ],
+    },
+  },
 ];
 
 export function getProjectByTag(tag: string): Project | undefined {
