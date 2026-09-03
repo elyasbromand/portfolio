@@ -362,6 +362,135 @@ export const projects: Project[] = [
       ],
     },
   },
+  {
+    tag: "web-scraper",
+    status: "beta",
+    name: "The Polite Scraper",
+    desc: "A Node.js scraper for books.toscrape.com that checks robots.txt, caches every fetch, and validates every record against a strict schema before it counts as data.",
+    stack: ["Node.js", "Cheerio", "Zod", "Fetch API"],
+    m1v: "219x",
+    m1l: "faster on warm cache",
+    m2v: "0",
+    m2l: "invalid records",
+
+    github: "https://github.com/elyasbromand/web-scraper",
+    tagline:
+      "Everyone talks about the model on top — this is the part underneath, treating a successful fetch and a correct record as two different claims.",
+    problem:
+      "Most conversations about AI are about the model, not about where its data comes from. I wanted to build a scraper that took the unglamorous part seriously: identify itself honestly, respect the target site's robots.txt and rate limits before a single request goes out, and — the part that actually bit me — never let a technically successful HTTP fetch pass for a correctly extracted record.",
+    approach:
+      "I built a Node.js scraper (native fetch, cheerio, Zod) that checks robots.txt before issuing any request, then crawls the catalogue through a disk cache in front of every fetch, an 8-second per-request timeout, and exponential backoff with jitter on 429/5xx responses (honoring Retry-After when the server sends one, never retrying 403/404). The harder problem wasn't the retry logic — it was realizing a 200 response tells you nothing about whether your CSS selector actually landed on the right node. Cheerio doesn't throw on a missed selector, it just returns an empty string, so a page with a slightly different DOM shape produces a 'successful' fetch and silently wrong output. I made every record pass a strict Zod schema before it's allowed into books.json — anything that doesn't validate is quarantined to errors.json instead of corrupting the good data — and logged every fetch, cache hit, retry, and skip to a structured run.log, so a bad record is always traceable back to the exact request that produced it.",
+    results: [
+      "A warm-cache run finished in 439ms versus 96,219ms cold — a 219x speedup — while returning the exact same 60 validated records, so iterating on extraction logic never means re-hitting the target site.",
+      "Zero invalid records across 60 real extractions: every field that reaches books.json has passed a strict Zod schema, and a page that renders with the wrong DOM shape gets quarantined to errors.json instead of silently corrupting output.",
+      "Every request identifies itself with a real user-agent, respects an 8-second timeout, and retries 429/5xx up to 3 times with exponential backoff plus jitter (honoring Retry-After when present) instead of hammering the site in lockstep.",
+    ],
+    stats: [
+      { value: 60, label: "book records extracted" },
+      { value: 219, suffix: "x", label: "faster on a warm cache" },
+      { value: 0, label: "invalid records across 60" },
+      { value: 3, label: "max retries with backoff" },
+    ],
+    architecture: {
+      caption: "// how a page becomes a validated record",
+      stages: [
+        { nodes: [{ label: "robots.txt + cache", sublabel: "checked before any request" }] },
+        { nodes: [{ label: "scraper", sublabel: "fetch, timeout, backoff + jitter", accent: true }] },
+        { nodes: [{ label: "cheerio", sublabel: "DOM extraction" }] },
+        { nodes: [{ label: "Zod schema", sublabel: "strict validation" }] },
+        {
+          nodes: [
+            { label: "books.json / .csv", sublabel: "valid, deduped" },
+            { label: "errors.json", sublabel: "quarantined" },
+          ],
+        },
+      ],
+    },
+    terminalLog: [
+      "$ node src/index.js",
+      "FETCH https://books.toscrape.com/catalogue/page-1.html (status=200, size=50449 bytes)",
+      "CACHE HIT https://books.toscrape.com/catalogue/page-2.html (size=50853 bytes)",
+      "SKIP https://books.toscrape.com/catalogue/this-book-does-not-exist_99999/index.html: Not found (404)",
+      "retry attempt=1 status=500 wait=1187ms https://books.toscrape.com/catalogue/sharp-objects_997/index.html",
+      "Extracted 60 book records (1 failed)",
+      "Valid: 60, Errors: 0, Failed pages: 1",
+      "Run report written to output/run-report.json",
+      "CSV written to output/books.csv",
+    ],
+    codeSnippet: {
+      filename: "src/index.js",
+      lines: [
+        [
+          {
+            text: "// a 200 doesn't mean the selector found the right node —",
+            color: "#6b7178",
+          },
+        ],
+        [
+          {
+            text: "// every record must pass this schema before it reaches books.json",
+            color: "#6b7178",
+          },
+        ],
+        [
+          { text: "const", color: "#79c0ff" },
+          { text: " BookSchema = z." },
+          { text: "object", color: "#d2a8ff" },
+          { text: "({" },
+        ],
+        [
+          { text: "  title: z." },
+          { text: "string", color: "#d2a8ff" },
+          { text: "()." },
+          { text: "min", color: "#d2a8ff" },
+          { text: "(1)," },
+        ],
+        [
+          { text: "  product_url: z." },
+          { text: "url", color: "#d2a8ff" },
+          { text: "()," },
+        ],
+        [
+          { text: "  price_gbp: z." },
+          { text: "number", color: "#d2a8ff" },
+          { text: "()." },
+          { text: "positive", color: "#d2a8ff" },
+          { text: "()," },
+        ],
+        [{ text: "});" }],
+        [{ text: "" }],
+        [
+          { text: "function", color: "#79c0ff" },
+          { text: " " },
+          { text: "normalizeAndValidate", color: "#d2a8ff" },
+          { text: "(rawRecord) {" },
+        ],
+        [
+          { text: "  const", color: "#79c0ff" },
+          { text: " result = BookSchema." },
+          { text: "safeParse", color: "#d2a8ff" },
+          { text: "(rawRecord);" },
+        ],
+        [
+          { text: "  " },
+          { text: "if", color: "#79c0ff" },
+          { text: " (result.success) " },
+          { text: "return", color: "#79c0ff" },
+          { text: " { ok: " },
+          { text: "true", color: "#7ee787" },
+          { text: ", record: result.data };" },
+        ],
+        [
+          { text: "  " },
+          { text: "return", color: "#79c0ff" },
+          { text: " { ok: " },
+          { text: "false", color: "#7ee787" },
+          { text: ", record: rawRecord, reason: ...issues };" },
+        ],
+        [{ text: "}" }],
+      ],
+    },
+  },
 ];
 
 export function getProjectByTag(tag: string): Project | undefined {
