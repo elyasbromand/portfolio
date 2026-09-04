@@ -55,6 +55,8 @@ export default function ProjectHeader({ project }: ProjectHeaderProps) {
           color: "#a2a8b0",
           maxWidth: "56ch",
           marginBottom: 28,
+          textAlign: "justify",
+          hyphens: "auto",
         }}
       >
         {project.tagline}

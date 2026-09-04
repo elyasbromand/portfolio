@@ -61,6 +61,8 @@ export default async function ProjectPage({ params }: PageProps) {
           color: "#a2a8b0",
           maxWidth: "68ch",
           marginBottom: 64,
+          textAlign: "justify",
+          hyphens: "auto",
         }}
       >
         {project.desc}
@@ -76,6 +78,8 @@ export default async function ProjectPage({ params }: PageProps) {
             fontSize: 16,
             lineHeight: 1.75,
             maxWidth: "72ch",
+            textAlign: "justify",
+            hyphens: "auto",
           }}
         >
           {project.problem}
@@ -91,6 +95,8 @@ export default async function ProjectPage({ params }: PageProps) {
             color: "#a2a8b0",
             maxWidth: "72ch",
             marginBottom: 28,
+            textAlign: "justify",
+            hyphens: "auto",
           }}
         >
           {project.approach}

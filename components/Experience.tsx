@@ -6,7 +6,7 @@ import styles from "./Experience.module.css";
 export default function Experience() {
   return (
     <section style={{ padding: "72px 0 24px" }}>
-      <SectionHeading index="05" title="Experience" />
+      <SectionHeading index="03" title="Experience" />
 
       <div style={{ display: "flex", flexDirection: "column" }}>
         {experience.map((x, i) => (
@@ -34,7 +34,40 @@ export default function Experience() {
                 <span style={{ color: "#565b63" }}>·</span>
                 <span style={{ fontSize: 15, color: "#7ee787" }}>{x.org}</span>
               </div>
-              <p style={{ fontSize: 14.5, color: "#9098a0", lineHeight: 1.6 }}>{x.desc}</p>
+              {Array.isArray(x.desc) ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {x.desc.map((line, j) => (
+                    <div key={j} style={{ display: "flex", alignItems: "flex-start", gap: 9 }}>
+                      <span style={{ color: "#7ee787", fontFamily: fonts.mono, fontSize: 12.5, marginTop: 3 }}>
+                        ◆
+                      </span>
+                      <p
+                        style={{
+                          fontSize: 14.5,
+                          color: "#9098a0",
+                          lineHeight: 1.6,
+                          textAlign: "justify",
+                          hyphens: "auto",
+                        }}
+                      >
+                        {line}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p
+                  style={{
+                    fontSize: 14.5,
+                    color: "#9098a0",
+                    lineHeight: 1.6,
+                    textAlign: "justify",
+                    hyphens: "auto",
+                  }}
+                >
+                  {x.desc}
+                </p>
+              )}
             </div>
           </div>
         ))}

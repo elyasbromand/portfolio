@@ -5,7 +5,7 @@ import SectionHeading from "./SectionHeading";
 export default function Toolbox() {
   return (
     <section id="stack" style={{ padding: "72px 0 24px" }}>
-      <SectionHeading index="03" title="Toolbox" />
+      <SectionHeading index="04" title="Toolbox" />
 
       <div
         style={{

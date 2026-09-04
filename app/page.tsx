@@ -3,7 +3,6 @@ import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Metrics from "@/components/Metrics";
 import SelectedWork from "@/components/SelectedWork";
-import Systems from "@/components/Systems";
 import Toolbox from "@/components/Toolbox";
 import Certifications from "@/components/Certifications";
 import Experience from "@/components/Experience";
@@ -19,10 +18,9 @@ export default async function Home() {
       <Hero />
       <Metrics stats={githubStats} />
       <SelectedWork />
-      <Systems />
-      <Toolbox />
       <Certifications />
       <Experience />
+      <Toolbox />
       <Contact />
     </PageShell>
   );

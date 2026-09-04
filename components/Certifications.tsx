@@ -15,7 +15,7 @@ export default function Certifications() {
 
   return (
     <section id="certifications" style={{ padding: "72px 0 40px" }}>
-      <SectionHeading index="04" title="Certifications" />
+      <SectionHeading index="02" title="Certifications" />
 
       <p
         style={{

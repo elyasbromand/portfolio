@@ -7,9 +7,8 @@ import styles from "./Nav.module.css";
 
 const links = [
   { href: "/#work", label: "work" },
-  { href: "/#systems", label: "systems" },
-  { href: "/#stack", label: "stack" },
   { href: "/#certifications", label: "certifications" },
+  { href: "/#stack", label: "stack" },
 ];
 
 export default function Nav() {

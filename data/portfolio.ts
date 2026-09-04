@@ -310,60 +310,72 @@ export function getProjectByTag(tag: string): Project | undefined {
   return projects.find((p) => p.tag === tag);
 }
 
-export interface Principle {
-  t: string;
-  d: string;
-}
-
-export const principles: Principle[] = [
-  { t: "Correctness first", d: "Invariants enforced in the datastore, not just the app layer." },
-  { t: "Observable by default", d: "Traces, metrics, and structured logs on every path." },
-  { t: "Fail gracefully", d: "Backpressure, timeouts, and circuit breakers, not cascades." },
-  { t: "Idempotent writes", d: "Every mutation is safe to retry — replays are no-ops." },
-];
-
 export interface StackGroup {
   label: string;
   items: string[];
 }
 
 export const stackGroups: StackGroup[] = [
-  { label: "Languages", items: ["Go", "Rust", "Python", "SQL", "Bash"] },
-  { label: "Datastores", items: ["Postgres", "Redis", "Elasticsearch", "ClickHouse"] },
-  { label: "Messaging", items: ["Kafka", "NATS", "gRPC", "Protobuf"] },
-  { label: "Infra & ops", items: ["Docker", "Kubernetes", "Terraform", "GitHub Actions"] },
-  { label: "Observability", items: ["OpenTelemetry", "Prometheus", "Grafana", "Loki"] },
-  { label: "Practices", items: ["TDD", "Load testing", "Chaos drills", "Runbooks"] },
+  { label: "Languages", items: ["JavaScript", "TypeScript", "Python", "SQL", "PHP", "C#", "Java"] },
+  { label: "Frameworks / Runtime", items: ["Node.js", "Next.js", "React", "Prisma", "FastMCP", ".NET"] },
+  { label: "Datastores", items: ["PostgreSQL", "Redis", "MySQL"] },
+  { label: "Infra & ops", items: ["Docker", "Git"] },
+  { label: "AI / Automation", items: ["MCP", "n8n", "Gemini API", "Claude Code"] },
+  { label: "Practices", items: ["Clean Architecture", "Layered Architecture", "CQRS", "REST API"] },
 ];
 
 export interface ExperienceItem {
   period: string;
   role: string;
   org: string;
-  desc: string;
+  /** A single summary line, or a list of distinct achievements rendered as bullets. */
+  desc: string | string[];
 }
 
 export const experience: ExperienceItem[] = [
   {
-    period: "2024 — present",
-    role: "Backend Engineer",
-    org: "Payments platform",
-    desc: "Own the ledger and fanout services end to end — schema design, on-call, and the SLOs that keep them honest.",
+    period: "Jun 2026 — present",
+    role: "Backend AI Engineer — Intern",
+    org: "FlyRank AI",
+    desc: [
+      "Built and configured workflow pipelines and automations as a Backend AI Engineer, integrating AI into backend services to solve real-world problems.",
+      "Built MCP projects and n8n workflows, demonstrating strong proficiency with API integration.",
+      "Worked primarily with Node.js, TypeScript, JavaScript, Python as the core tech stack for this internship.",
+    ],
   },
   {
-    period: "2023 — 2024",
+    period: "Sep 2025 — present",
+    role: "Full Stack Developer",
+    org: "Webistan (Software & Cloud Solutions company)",
+    desc: [
+      "Full-stack developer building production web applications with Next.js, Prisma, and MySQL — contributing across multiple client and internal products, primarily owning backend services, API design, and database architecture.",
+      "Built reporting and analytics features that turn raw transaction data into actionable business insight (revenue trends, margin analysis, top-performer breakdowns) using custom database aggregation logic — deployed on a POS system used by a live client.",
+      "Delivered end-to-end modules spanning authentication, inventory management, sales processing, and content delivery systems across different products, including a point-of-sale platform and an online reading platform.",
+      "Collaborate within productive teams to ship full features from schema design through frontend integration.",
+    ],
+  },
+  {
+    period: "Feb 2026 — Jun 2026",
+    role: "AFMIS & SPBS Systems Intern",
+    org: "Ministry of Finance (AFMIS System Department)",
+    desc: [
+      "Worked on the Voucher Management System as part of this internship — full project details on GitHub (github.com/elyasbromand/Voucher-Management-System).",
+      "Implemented Clean Architecture with Domain-Driven Design and CQRS, using .NET and Docker for containerized development.",
+      "Applied JWT authentication to secure the system's REST API.",
+    ],
+  },
+  {
+    period: "Nov 2024 — Mar 2025",
     role: "Backend Developer",
-    org: "Logistics startup",
-    desc: "Built the order and inventory APIs; cut p99 latency in half by moving hot reads behind Redis and fixing N+1 queries.",
+    org: "Freelance (Transit Company Web App)",
+    desc: [
+      "Architected and implemented a multi-warehouse MySQL database system, enabling real-time stock tracking across 3 inventories.",
+      "Developed core backend modules including a finance/journal system, user authentication, and money-exchange workflows.",
+      "Built primarily with PHP, integrating WordPress global variable access for cross-module data sharing.",
+    ],
   },
   {
-    period: "2022 — 2023",
-    role: "Freelance / open source",
-    org: "Independent",
-    desc: "Shipped internal tools and API integrations for small teams; maintained a handful of Go libraries.",
-  },
-  {
-    period: "2021 — present",
+    period: "2023 — present",
     role: "B.Sc. Information Systems",
     org: "Kabul Polytechnic University",
     desc: "7th semester. Coursework in databases, networks, distributed systems, and software engineering.",
@@ -475,20 +487,20 @@ export const certifications: Certification[] = [
     verifyUrl: "https://verify.skilljar.com/c/fn8hq7rryqh5",
   },
   {
-    name: "Introduction to Amazon EC2",
-    issuer: "aws",
-    date: "Jan 2026",
-    credentialId: "AW·9021",
-    skills: ["EC2", "Compute", "Cloud", "AWS Auto Scaling"],
-    verifyUrl: "#",
-  },
-  {
     name: "AWS Certified Cloud Practitioner",
     issuer: "aws",
     date: "Mar 2024",
     credentialId: "8c86afea35fd4d619df3e52776fb0e20",
     skills: ["Cloud Practitioner", "Cloud Foundation", "IAM Basics", "AWS Services"],
     verifyUrl: "https://www.credly.com/badges/4f866b7c-bc00-4619-a3f2-5df2152f2a45",
+  },
+  {
+    name: "Introduction to Amazon EC2",
+    issuer: "aws",
+    date: "Jan 2026",
+    credentialId: "AW·9021",
+    skills: ["EC2", "Compute", "Cloud", "AWS Auto Scaling"],
+    verifyUrl: "#",
   },
   {
     name: "Introduction to Cybersecurity Tools & Cyberattacks",

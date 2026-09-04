@@ -12,7 +12,17 @@ export default function ResultsList({ results }: ResultsListProps) {
           <span style={{ color: "#7ee787", fontFamily: fonts.mono, fontSize: 14, marginTop: 2 }}>
             ◆
           </span>
-          <p style={{ fontSize: 15.5, color: "#c4c9cf", lineHeight: 1.6 }}>{r}</p>
+          <p
+            style={{
+              fontSize: 15.5,
+              color: "#c4c9cf",
+              lineHeight: 1.6,
+              textAlign: "justify",
+              hyphens: "auto",
+            }}
+          >
+            {r}
+          </p>
         </div>
       ))}
     </div>
