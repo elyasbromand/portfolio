@@ -370,6 +370,144 @@ export const experience: ExperienceItem[] = [
   },
 ];
 
+export interface CertificationIssuer {
+  key: string;
+  name: string;
+  /** 3-letter wordmark shown in the 36×36 badge slot until a real logo drops in. */
+  badge: string;
+  via: string;
+  blurb: string;
+}
+
+export const certificationIssuers: CertificationIssuer[] = [
+  {
+    key: "anthropic",
+    name: "Anthropic",
+    badge: "ANT",
+    via: "anthropic.skilljar.com",
+    blurb:
+      "The core of it — Claude Code, the Model Context Protocol, and working with the API rather than a chat box.",
+  },
+  {
+    key: "ibm",
+    name: "IBM",
+    badge: "IBM",
+    via: "via Coursera",
+    blurb: "Security fundamentals: threat models, attack surfaces, and the tooling used to find both.",
+  },
+  {
+    key: "aws",
+    name: "Amazon Web Services",
+    badge: "AWS",
+    via: "AWS Skill Builder",
+    blurb: "Compute primitives — the layer the backend services I write actually run on.",
+  },
+  {
+    key: "udemy",
+    name: "Udemy",
+    badge: "UDM",
+    via: "udemy.com/certificate",
+    blurb: "Self-directed coursework alongside the degree.",
+  },
+];
+
+export interface Certification {
+  name: string;
+  /** Matches a CertificationIssuer.key. */
+  issuer: string;
+  date: string;
+  credentialId: string;
+  skills: string[];
+  verifyUrl: string;
+  /** Real title/ID not filled in yet — dims the row instead of pretending it's real. */
+  placeholder?: boolean;
+}
+
+export const certifications: Certification[] = [
+  {
+    name: "Introduction to Model Context Protocol",
+    issuer: "anthropic",
+    date: "Mar 2026",
+    credentialId: "AC·7f21",
+    skills: ["MCP", "Tool calling", "Client/server"],
+    verifyUrl: "#",
+  },
+  {
+    name: "Claude Code in Action",
+    issuer: "anthropic",
+    date: "Feb 2026",
+    credentialId: "AC·3b9e",
+    skills: ["Claude Code", "Agentic workflows", "CLI"],
+    verifyUrl: "#",
+  },
+  {
+    name: "Claude Code 101",
+    issuer: "anthropic",
+    date: "Jan 2026",
+    credentialId: "AC·d104",
+    skills: ["Claude Code", "Terminal"],
+    verifyUrl: "#",
+  },
+  {
+    name: "Claude 101",
+    issuer: "anthropic",
+    date: "Dec 2025",
+    credentialId: "AC·a882",
+    skills: ["Prompting", "Claude API"],
+    verifyUrl: "#",
+  },
+  {
+    name: "AI Fluency: Framework & Foundations",
+    issuer: "anthropic",
+    date: "Nov 2025",
+    credentialId: "AC·5c60",
+    skills: ["AI fluency", "Delegation"],
+    verifyUrl: "#",
+  },
+  {
+    name: "AI Fluency for Students",
+    issuer: "anthropic",
+    date: "Nov 2025",
+    credentialId: "AC·1e47",
+    skills: ["AI fluency", "Critical use"],
+    verifyUrl: "#",
+  },
+  {
+    name: "Introduction to Amazon EC2",
+    issuer: "aws",
+    date: "Sep 2025",
+    credentialId: "AW·9021",
+    skills: ["EC2", "Compute", "Cloud"],
+    verifyUrl: "#",
+  },
+  {
+    name: "Introduction to Cybersecurity Tools & Cyberattacks",
+    issuer: "ibm",
+    date: "Aug 2025",
+    credentialId: "CO·4a3d",
+    skills: ["Threat models", "Security tooling"],
+    verifyUrl: "#",
+  },
+  {
+    name: "— add Udemy course title —",
+    issuer: "udemy",
+    date: "2025",
+    credentialId: "UC·····",
+    skills: ["skills TBD"],
+    verifyUrl: "#",
+    placeholder: true,
+  },
+  {
+    name: "— add Udemy course title —",
+    issuer: "udemy",
+    date: "2025",
+    credentialId: "UC·····",
+    skills: ["skills TBD"],
+    verifyUrl: "#",
+    placeholder: true,
+  },
+];
+
 export interface Hackathon {
   project: string;
   host: string;
