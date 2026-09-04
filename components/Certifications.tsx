@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { fonts } from "@/lib/fonts";
 import { certificationIssuers, certifications } from "@/data/portfolio";
 import SectionHeading from "./SectionHeading";
@@ -69,6 +70,8 @@ export default function Certifications() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
+                    position: "relative",
+                    overflow: "hidden",
                     fontFamily: fonts.mono,
                     fontSize: 10.5,
                     fontWeight: 600,
@@ -76,9 +79,13 @@ export default function Certifications() {
                     color: isActive ? "#7ee787" : "#6b7178",
                   }}
                 >
-                  {iss.badge}
+                  {iss.logo ? (
+                    <Image src={iss.logo} alt={iss.name} fill sizes="36px" style={{ objectFit: "cover" }} />
+                  ) : (
+                    iss.badge
+                  )}
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
+                <div className={styles.railItemText} style={{ flex: 1, minWidth: 0 }}>
                   <div
                     style={{
                       fontFamily: fonts.display,
@@ -116,23 +123,6 @@ export default function Certifications() {
               </div>
             );
           })}
-
-          <div
-            className={styles.railNote}
-            style={{
-              margin: "12px 20px 4px",
-              paddingTop: 16,
-              borderTop: "1px solid rgba(255,255,255,0.06)",
-              fontFamily: fonts.mono,
-              fontSize: 11.5,
-              color: "#565b63",
-              lineHeight: 1.8,
-            }}
-          >
-            // swap the 3-letter marks
-            <br />
-            // for real logos, 36×36
-          </div>
         </div>
 
         <div style={{ background: "#0d0f12", padding: "26px 28px 22px", minWidth: 0 }}>

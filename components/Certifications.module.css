@@ -44,7 +44,13 @@
     gap: 10px;
   }
 
-  .railNote {
+  .railItem {
+    min-width: auto;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .railItemText {
     display: none;
   }
 }

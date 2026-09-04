@@ -373,8 +373,10 @@ export const experience: ExperienceItem[] = [
 export interface CertificationIssuer {
   key: string;
   name: string;
-  /** 3-letter wordmark shown in the 36×36 badge slot until a real logo drops in. */
-  badge: string;
+  /** Fallback shown in the 36×36 badge slot only while `logo` is unset. */
+  badge?: string;
+  /** Path under /public (e.g. "/logos/anthropic.svg"). When set, replaces `badge` in the 36×36 slot. */
+  logo?: string;
   via: string;
   blurb: string;
 }
@@ -383,7 +385,7 @@ export const certificationIssuers: CertificationIssuer[] = [
   {
     key: "anthropic",
     name: "Anthropic",
-    badge: "ANT",
+    logo: "/logos/anthropicresearch_logo.jpg",
     via: "anthropic.skilljar.com",
     blurb:
       "The core of it — Claude Code, the Model Context Protocol, and working with the API rather than a chat box.",
@@ -391,21 +393,21 @@ export const certificationIssuers: CertificationIssuer[] = [
   {
     key: "ibm",
     name: "IBM",
-    badge: "IBM",
+    logo: "/logos/ibm_logo.jpg",
     via: "via Coursera",
     blurb: "Security fundamentals: threat models, attack surfaces, and the tooling used to find both.",
   },
   {
     key: "aws",
     name: "Amazon Web Services",
-    badge: "AWS",
+    logo: "/logos/amazon_web_services_logo.jpg",
     via: "AWS Skill Builder",
     blurb: "Compute primitives — the layer the backend services I write actually run on.",
   },
   {
     key: "udemy",
     name: "Udemy",
-    badge: "UDM",
+    logo: "/logos/udemy_logo.jpg",
     via: "udemy.com/certificate",
     blurb: "Self-directed coursework alongside the degree.",
   },
