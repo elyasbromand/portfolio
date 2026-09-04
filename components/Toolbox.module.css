@@ -1,0 +1,302 @@
+/* Toolbox — bracket tree (desktop) / spine (phone).
+   Breakpoints follow the project convention: 860px tablet, 640px mobile.
+   Colours are the portfolio's: #7ee787 accent, #c4c9cf items, #565b63 muted. */
+
+:root {
+  --tb-line: rgba(126, 231, 135, 0.55);
+  --tb-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ───────── desktop / phone switch ───────── */
+
+.desktop {
+  display: block;
+}
+
+.mobile {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .desktop {
+    display: none;
+  }
+  .mobile {
+    display: block;
+  }
+}
+
+/* ───────── desktop: title ───────── */
+
+.bigTitle {
+  font-weight: 600;
+  font-size: 40px;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.caption {
+  font-size: 12.5px;
+  color: #565b63;
+  margin-top: 10px;
+  opacity: 0;
+}
+
+.desktop[data-drawn="true"] .bigTitle,
+.desktop[data-drawn="true"] .caption {
+  opacity: 1;
+  transform: none;
+  transition: all 0.44s var(--tb-ease);
+}
+
+@media (max-width: 1000px) {
+  .bigTitle {
+    font-size: 32px;
+  }
+}
+
+/* ───────── desktop: the bracket ───────── */
+
+.bracket {
+  position: relative;
+  height: 78px;
+  margin-top: 20px;
+}
+
+.stem {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 38px;
+  margin-left: -0.5px;
+  background: var(--tb-line);
+  transform-origin: top;
+  transform: scaleY(0);
+}
+
+/* rail spans the centre of the first column to the centre of the last:
+   one half-column inset on each side (6 tracks, 5 × 20px gaps) */
+.rail {
+  position: absolute;
+  left: calc((100% - 100px) / 12);
+  right: calc((100% - 100px) / 12);
+  top: 38px;
+  height: 1px;
+  background: var(--tb-line);
+  transform-origin: center;
+  transform: scaleX(0);
+}
+
+.legs {
+  position: absolute;
+  top: 38px;
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px;
+}
+
+.legCell {
+  display: flex;
+  justify-content: center;
+}
+
+.leg {
+  width: 1px;
+  height: 40px;
+  background: var(--tb-line);
+  transform-origin: top;
+  transform: scaleY(0);
+}
+
+.desktop[data-drawn="true"] .stem {
+  transform: scaleY(1);
+  transition: transform 0.3s var(--tb-ease) 0.22s;
+}
+
+.desktop[data-drawn="true"] .rail {
+  transform: scaleX(1);
+  transition: transform 0.5s var(--tb-ease) 0.5s;
+}
+
+.desktop[data-drawn="true"] .leg {
+  transform: scaleY(1);
+  transition: transform 0.26s var(--tb-ease) 0.98s;
+}
+
+.desktop[data-drawn="true"] .legCell:nth-child(2) .leg { transition-delay: 1.02s; }
+.desktop[data-drawn="true"] .legCell:nth-child(3) .leg { transition-delay: 1.06s; }
+.desktop[data-drawn="true"] .legCell:nth-child(4) .leg { transition-delay: 1.1s; }
+.desktop[data-drawn="true"] .legCell:nth-child(5) .leg { transition-delay: 1.14s; }
+.desktop[data-drawn="true"] .legCell:nth-child(6) .leg { transition-delay: 1.18s; }
+
+/* ───────── desktop: columns ───────── */
+
+.cols {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.col {
+  min-width: 0;
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.desktop[data-drawn="true"] .col {
+  opacity: 1;
+  transform: none;
+  transition: all 0.44s var(--tb-ease) 1.18s;
+}
+
+.desktop[data-drawn="true"] .col:nth-child(2) { transition-delay: 1.25s; }
+.desktop[data-drawn="true"] .col:nth-child(3) { transition-delay: 1.32s; }
+.desktop[data-drawn="true"] .col:nth-child(4) { transition-delay: 1.39s; }
+.desktop[data-drawn="true"] .col:nth-child(5) { transition-delay: 1.46s; }
+.desktop[data-drawn="true"] .col:nth-child(6) { transition-delay: 1.53s; }
+
+.colTitle {
+  font-weight: 600;
+  font-size: 16.5px;
+  color: #f4f6f7;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  text-align: center;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.colItems {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  text-align: center;
+}
+
+/* ───────── phone: spine ───────── */
+
+.mBigTitle {
+  font-weight: 600;
+  font-size: 27px;
+  letter-spacing: -0.025em;
+  line-height: 1.12;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.mCaption {
+  font-size: 11.5px;
+  color: #565b63;
+  margin: 10px 0 22px;
+  opacity: 0;
+}
+
+.mobile[data-drawn="true"] .mBigTitle,
+.mobile[data-drawn="true"] .mCaption {
+  opacity: 1;
+  transform: none;
+  transition: all 0.44s var(--tb-ease);
+}
+
+.spineWrap {
+  position: relative;
+  padding-left: 28px;
+}
+
+.spine {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 30px;
+  width: 1px;
+  background: var(--tb-line);
+  transform-origin: top;
+  transform: scaleY(0);
+}
+
+.mobile[data-drawn="true"] .spine {
+  transform: scaleY(1);
+  transition: transform 0.7s var(--tb-ease) 0.3s;
+}
+
+.branch {
+  position: relative;
+  padding-bottom: 22px;
+  opacity: 0;
+  transform: translateX(-14px);
+}
+
+.tick {
+  position: absolute;
+  left: -28px;
+  top: 12px;
+  width: 20px;
+  height: 1px;
+  background: var(--tb-line);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+.mobile[data-drawn="true"] .branch,
+.mobile[data-drawn="true"] .tick {
+  opacity: 1;
+  transform: none;
+  transition: all 0.4s var(--tb-ease) 0.62s;
+}
+
+.mobile[data-drawn="true"] .branch:nth-of-type(2),
+.mobile[data-drawn="true"] .branch:nth-of-type(2) .tick { transition-delay: 0.71s; }
+.mobile[data-drawn="true"] .branch:nth-of-type(3),
+.mobile[data-drawn="true"] .branch:nth-of-type(3) .tick { transition-delay: 0.8s; }
+.mobile[data-drawn="true"] .branch:nth-of-type(4),
+.mobile[data-drawn="true"] .branch:nth-of-type(4) .tick { transition-delay: 0.89s; }
+.mobile[data-drawn="true"] .branch:nth-of-type(5),
+.mobile[data-drawn="true"] .branch:nth-of-type(5) .tick { transition-delay: 0.98s; }
+.mobile[data-drawn="true"] .branch:nth-of-type(6),
+.mobile[data-drawn="true"] .branch:nth-of-type(6) .tick { transition-delay: 1.07s; }
+
+.branchHead {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  margin-bottom: 11px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bigTitle,
+  .caption,
+  .col,
+  .mBigTitle,
+  .mCaption,
+  .branch {
+    opacity: 1;
+    transform: none;
+  }
+  .stem,
+  .leg,
+  .spine {
+    transform: scaleY(1);
+  }
+  .rail,
+  .tick {
+    transform: scaleX(1);
+  }
+  .desktop[data-drawn="true"] *,
+  .mobile[data-drawn="true"] * {
+    transition: none !important;
+  }
+}
