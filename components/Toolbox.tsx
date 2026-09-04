@@ -44,7 +44,7 @@ export default function Toolbox() {
 
   return (
     <section id="stack" style={{ padding: "72px 0 24px" }}>
-      <SectionHeading index="04" title="Toolbox" />
+      <SectionHeading index="04" title="Tech Stack" />
 
       {/* ── desktop: bracket tree ─────────────────────────────── */}
       <div ref={desktopRef} className={styles.desktop} data-drawn={drawn}>
