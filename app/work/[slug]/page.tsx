@@ -26,9 +26,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const project = getProjectByTag(slug);
   if (!project) return {};
+
+  const title = project.seoTitle ?? project.name;
+  const description = project.seoDescription ?? project.tagline;
+  const path = `/work/${project.tag}`;
+
   return {
-    title: `${project.name} — Elyas Bromand`,
-    description: project.tagline,
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      type: "article",
+      title,
+      description,
+      url: path,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 

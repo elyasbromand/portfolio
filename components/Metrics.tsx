@@ -160,8 +160,8 @@ export default function Metrics({ stats }: MetricsProps) {
         </div>
 
         <div className={styles.card}>
-          <div style={statLabelStyle}>Hackathon win</div>
-          <div style={statValueStyle}>{hackathon.project}</div>
+          <div style={statLabelStyle}>International hackathon win</div>
+          <div style={statValueStyle}>1</div>
           <div style={statSubStyle}>
             {hackathon.host} · {hackathon.challenge}
           </div>

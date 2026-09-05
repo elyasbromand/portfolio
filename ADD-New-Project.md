@@ -69,7 +69,9 @@ components you can layer on top of this.
 | `architecture` | `{ caption, stages }` | A left-to-right flow diagram. See §3.2. |
 | `codeSnippet` | `{ filename, lines }` | A syntax-highlighted code editor window. See §3.3. |
 | `terminalLog` | `string[]` | A styled fake-terminal window with colored command/output lines. See §3.4. |
-| `terminalScreenshot` | `{ src, alt? }` | A real screenshot inside the terminal window chrome. **Takes priority over `terminalLog`** if both are set — pick one. See §3.4. |
+| `terminalScreenshot` | `{ src, alt }` | A real screenshot inside the terminal window chrome. `alt` is **required** — describe what the screenshot shows, not "screenshot". **Takes priority over `terminalLog`** if both are set — pick one. See §3.4. |
+| `seoTitle` | `string` | Overrides the `<title>` for `/work/<tag>` (falls back to `name`). Only set this if you want the SEO title to differ from the on-page heading. |
+| `seoDescription` | `string` | Overrides the meta/OG/Twitter description for `/work/<tag>` (falls back to `tagline`). Write it as a standalone, search-result-friendly sentence if `tagline` reads better mid-page than in a Google snippet. |
 
 You can mix and match freely: one project might have only a diagram, another a
 terminal log and no diagram, another all three. Look at the four existing projects in
@@ -277,8 +279,12 @@ know they exist and can write `problem`/`approach`/`results` with them in mind:
 
 - **Homepage grid** (`/`) — the project appears as a new card, using `tag`, `status`, `name`, `desc`, `stack`, `m1v`/`m1l`, `m2v`/`m2l`.
 - **Case-study page** — created at `/work/<tag>` with no extra routing work (`generateStaticParams` picks up every `project.tag` automatically).
-- **SEO metadata** — `<title>` becomes `"${name} — Elyas Bromand"`, description becomes `tagline` (via `generateMetadata`).
+- **SEO metadata** — `<title>` becomes `"${seoTitle ?? name} — Elyas Bromand"`, meta/OG/Twitter description becomes `seoDescription ?? tagline`, and the canonical URL is generated from the site's base URL + `/work/<tag>` (see `app/work/[slug]/page.tsx`'s `generateMetadata`) — none of this needs touching per project.
+- **OG / Twitter image** — `/work/<tag>/opengraph-image` renders a branded 1200×630 image from `name` + `seoDescription ?? tagline` automatically (`app/work/[slug]/opengraph-image.tsx`, sharing the renderer in `lib/og.tsx`). No image asset to create.
+- **Sitemap** — `/work/<tag>` is added to `app/sitemap.xml` automatically (`app/sitemap.ts` maps over `projects`).
 - **Homepage → case-study link** — the card is a `<Link>` to `/work/<tag>` automatically.
+
+See `lib/seo.ts` for the site-wide SEO config (name, role, employers, base URL, social links) that every page's metadata pulls from.
 
 ---
 

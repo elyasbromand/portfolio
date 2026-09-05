@@ -7,6 +7,7 @@ interface TerminalWindowProps {
   /** A real screenshot (e.g. "/screenshots/fanout-cli.png" in /public) —
    * takes priority over `lines` if both are given. */
   screenshot?: string;
+  /** Describe what the screenshot shows, not "screenshot" — required whenever `screenshot` is set. */
   screenshotAlt?: string;
   title?: string;
 }
@@ -22,7 +23,7 @@ function lineStyle(line: string): React.CSSProperties {
 export default function TerminalWindow({
   lines,
   screenshot,
-  screenshotAlt = "Terminal output",
+  screenshotAlt,
   title = "zsh",
 }: TerminalWindowProps) {
   return (
@@ -55,7 +56,7 @@ export default function TerminalWindow({
         <div style={{ position: "relative", width: "100%", lineHeight: 0 }}>
           <Image
             src={screenshot}
-            alt={screenshotAlt}
+            alt={screenshotAlt ?? ""}
             width={0}
             height={0}
             sizes="100vw"

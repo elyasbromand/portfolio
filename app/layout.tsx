@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { siteConfig } from "@/lib/seo";
 
 const jetbrainsMono = localFont({
   src: [
@@ -32,9 +33,27 @@ const publicSans = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Elyas Bromand — Backend Engineer",
-  description:
-    "Elyas Bromand — backend engineer focused on distributed services, data integrity, and low-latency APIs.",
+  metadataBase: new URL(siteConfig.url),
+  title: {
+    default: siteConfig.defaultTitle,
+    template: siteConfig.titleTemplate,
+  },
+  description: siteConfig.defaultDescription,
+  authors: [{ name: siteConfig.name, url: siteConfig.url }],
+  creator: siteConfig.name,
+  openGraph: {
+    type: "website",
+    siteName: siteConfig.name,
+    title: siteConfig.defaultTitle,
+    description: siteConfig.defaultDescription,
+    url: siteConfig.url,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.defaultTitle,
+    description: siteConfig.defaultDescription,
+  },
 };
 
 export default function RootLayout({

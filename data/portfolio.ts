@@ -29,6 +29,7 @@ export interface ArchitectureStage {
 }
 
 export interface Project {
+  /** URL slug for the case-study page (`/work/<tag>`) — also the homepage card's tag pill. Must be unique. */
   tag: string;
   status: string;
   name: string;
@@ -56,8 +57,13 @@ export interface Project {
     lines: CodeSegment[][];
   };
   terminalLog?: string[];
-  /** A real terminal screenshot instead of styled text — path under /public. */
-  terminalScreenshot?: { src: string; alt?: string };
+  /** A real terminal screenshot instead of styled text — path under /public. `alt` is required (no generic fallback). */
+  terminalScreenshot?: { src: string; alt: string };
+
+  /** `<title>` for /work/<tag> — falls back to `name` when omitted. */
+  seoTitle?: string;
+  /** Meta description / OG / Twitter description for /work/<tag> — falls back to `tagline` when omitted. */
+  seoDescription?: string;
 }
 
 export const projects: Project[] = [

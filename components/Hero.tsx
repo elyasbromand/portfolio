@@ -134,7 +134,7 @@ export default function Hero() {
         >
           <Image
             src="/portrait.jpeg"
-            alt="Elyas Bromand"
+            alt="Portrait of Elyas Bromand"
             fill
             priority
             sizes="(max-width: 640px) 100vw, 340px"

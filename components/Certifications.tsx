@@ -80,7 +80,7 @@ export default function Certifications() {
                   }}
                 >
                   {iss.logo ? (
-                    <Image src={iss.logo} alt={iss.name} fill sizes="36px" style={{ objectFit: "cover" }} />
+                    <Image src={iss.logo} alt={`${iss.name} logo`} fill sizes="36px" style={{ objectFit: "cover" }} />
                   ) : (
                     iss.badge
                   )}
