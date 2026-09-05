@@ -24,17 +24,22 @@ export async function renderOgImage({ eyebrow, title, subtitle }: RenderOgImageP
 
   return new ImageResponse(
     (
+      // WhatsApp/some clients crop this to a much smaller centered box before
+      // showing it, so all text is centered within a ~840px-wide safe zone
+      // instead of hugging the left edge — whatever gets cropped is margin.
       <div
         style={{
           width: "100%",
           height: "100%",
           display: "flex",
           flexDirection: "column",
+          alignItems: "center",
           justifyContent: "center",
-          padding: "88px",
+          textAlign: "center",
+          padding: "64px",
           background: "#0a0b0d",
           backgroundImage:
-            "radial-gradient(circle at 82% 15%, rgba(126,231,135,0.18), transparent 55%)",
+            "radial-gradient(circle at 50% 15%, rgba(126,231,135,0.16), transparent 55%)",
         }}
       >
         <div
@@ -43,9 +48,9 @@ export async function renderOgImage({ eyebrow, title, subtitle }: RenderOgImageP
             alignItems: "center",
             gap: 14,
             fontFamily: "JetBrains Mono",
-            fontSize: 28,
+            fontSize: 26,
             color: "#7ee787",
-            marginBottom: 40,
+            marginBottom: 36,
           }}
         >
           <div style={{ width: 14, height: 14, borderRadius: "50%", background: "#7ee787" }} />
@@ -55,12 +60,13 @@ export async function renderOgImage({ eyebrow, title, subtitle }: RenderOgImageP
           style={{
             display: "flex",
             fontFamily: "Space Grotesk",
-            fontSize: 62,
+            fontSize: 56,
             fontWeight: 600,
             lineHeight: 1.15,
             letterSpacing: "-0.02em",
             color: "#f4f6f7",
-            maxWidth: 980,
+            maxWidth: 840,
+            justifyContent: "center",
           }}
         >
           {title}
@@ -69,10 +75,11 @@ export async function renderOgImage({ eyebrow, title, subtitle }: RenderOgImageP
           style={{
             display: "flex",
             fontFamily: "JetBrains Mono",
-            fontSize: 28,
+            fontSize: 26,
             color: "#a2a8b0",
-            marginTop: 28,
-            maxWidth: 900,
+            marginTop: 26,
+            maxWidth: 760,
+            justifyContent: "center",
           }}
         >
           {subtitle}
