@@ -7,7 +7,15 @@ import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-export const ogImageSize = { width: 1200, height: 630 } as const;
+/**
+ * Rendered at 2x the 1200x630 logical design so the image stays sharp after
+ * WhatsApp/LinkedIn crop-and-scale their thumbnail — a crop of a low-pixel
+ * source gets blurry once scaled back up; a crop of a high-pixel source doesn't.
+ */
+const SCALE = 2;
+const px = (n: number) => n * SCALE;
+
+export const ogImageSize = { width: px(1200), height: px(630) } as const;
 export const ogImageContentType = "image/png";
 
 const displayFontData = readFile(join(process.cwd(), "app/fonts/space-grotesk-600.ttf"));
@@ -25,8 +33,8 @@ export async function renderOgImage({ eyebrow, title, subtitle }: RenderOgImageP
   return new ImageResponse(
     (
       // WhatsApp/some clients crop this to a much smaller centered box before
-      // showing it, so all text is centered within a ~840px-wide safe zone
-      // instead of hugging the left edge — whatever gets cropped is margin.
+      // showing it, so all text is centered within a safe zone instead of
+      // hugging the left edge — whatever gets cropped is margin, not text.
       <div
         style={{
           width: "100%",
@@ -36,7 +44,7 @@ export async function renderOgImage({ eyebrow, title, subtitle }: RenderOgImageP
           alignItems: "center",
           justifyContent: "center",
           textAlign: "center",
-          padding: "64px",
+          padding: px(64),
           background: "#0a0b0d",
           backgroundImage:
             "radial-gradient(circle at 50% 15%, rgba(126,231,135,0.16), transparent 55%)",
@@ -46,26 +54,33 @@ export async function renderOgImage({ eyebrow, title, subtitle }: RenderOgImageP
           style={{
             display: "flex",
             alignItems: "center",
-            gap: 14,
+            gap: px(14),
             fontFamily: "JetBrains Mono",
-            fontSize: 26,
+            fontSize: px(26),
             color: "#7ee787",
-            marginBottom: 36,
+            marginBottom: px(36),
           }}
         >
-          <div style={{ width: 14, height: 14, borderRadius: "50%", background: "#7ee787" }} />
+          <div
+            style={{
+              width: px(14),
+              height: px(14),
+              borderRadius: "50%",
+              background: "#7ee787",
+            }}
+          />
           {eyebrow}
         </div>
         <div
           style={{
             display: "flex",
             fontFamily: "Space Grotesk",
-            fontSize: 56,
+            fontSize: px(56),
             fontWeight: 600,
             lineHeight: 1.15,
             letterSpacing: "-0.02em",
             color: "#f4f6f7",
-            maxWidth: 840,
+            maxWidth: px(840),
             justifyContent: "center",
           }}
         >
@@ -75,10 +90,10 @@ export async function renderOgImage({ eyebrow, title, subtitle }: RenderOgImageP
           style={{
             display: "flex",
             fontFamily: "JetBrains Mono",
-            fontSize: 26,
+            fontSize: px(26),
             color: "#a2a8b0",
-            marginTop: 26,
-            maxWidth: 760,
+            marginTop: px(26),
+            maxWidth: px(760),
             justifyContent: "center",
           }}
         >
