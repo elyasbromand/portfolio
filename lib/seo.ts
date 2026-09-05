@@ -9,8 +9,8 @@ export const siteConfig = {
   name: "Elyas Bromand",
   role: "Full Stack Developer & Backend AI Engineer",
   employers: ["FlyRank AI", "Webistan"],
-  /** Set NEXT_PUBLIC_SITE_URL in .env.local / hosting env once a domain exists. */
-  url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://elyasbromand.com").replace(/\/+$/, ""),
+  /** Must also be set in Netlify's env vars (not just .env.local) — update if a custom domain replaces the Netlify subdomain. */
+  url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://elyasbromand.netlify.app").replace(/\/+$/, ""),
   titleTemplate: "%s — Elyas Bromand",
   defaultTitle: "Elyas Bromand — Full Stack Developer & Backend AI Engineer",
   defaultDescription:
