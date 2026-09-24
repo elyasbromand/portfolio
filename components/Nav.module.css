@@ -10,6 +10,13 @@
 
 .hireMe {
   padding: 7px 14px;
+  white-space: nowrap;
+}
+
+@media (max-width: 860px) {
+  .links {
+    gap: 16px;
+  }
 }
 
 @media (max-width: 640px) {

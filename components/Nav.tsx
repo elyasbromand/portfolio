@@ -8,6 +8,7 @@ import styles from "./Nav.module.css";
 const links = [
   { href: "/#work", label: "work" },
   { href: "/#certifications", label: "certifications" },
+  { href: "/#experience", label: "experience" },
   { href: "/#stack", label: "stack" },
 ];
 
@@ -38,7 +39,13 @@ export default function Nav() {
         zIndex: 10,
       }}
     >
-      <div
+      <Link
+        href="/"
+        onClick={() => {
+          setIsOpen(false);
+          // Already on "/" with no hash: the URL doesn't change, so Next won't scroll.
+          if (window.location.pathname === "/") window.scrollTo({ top: 0 });
+        }}
         style={{
           fontFamily: fonts.mono,
           fontSize: 14,
@@ -50,7 +57,7 @@ export default function Nav() {
         elyas
         <span style={{ color: "#565b63" }}>.</span>
         bromand
-      </div>
+      </Link>
 
       <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
         <div
