@@ -16,6 +16,12 @@ body {
   color: #eef2f0;
 }
 
+/* Nav anchor targets: stop the sticky Nav from covering the section heading
+   when jumping to /#work, /#stack, etc. */
+section[id] {
+  scroll-margin-top: 64px;
+}
+
 a {
   color: #7ee787;
   text-decoration: none;

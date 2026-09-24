@@ -154,7 +154,7 @@ export default function Metrics({ stats }: MetricsProps) {
         </div>
 
         <div className={styles.card}>
-          <div style={statLabelStyle}>Stars earned</div>
+          <div style={statLabelStyle}>Stars earned on GitHub</div>
           <div style={statValueStyle}>{Math.round(count.starsEarned)}</div>
           <div style={statSubStyle}>across public repos</div>
         </div>
