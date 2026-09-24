@@ -7,14 +7,14 @@ import { stackGroups } from "@/data/portfolio";
 
 export const siteConfig = {
   name: "Elyas Bromand",
-  role: "Full Stack Developer & Backend AI Engineer",
+  role: "Backend AI Engineer & Full-Stack Developer",
   employers: ["FlyRank AI", "Webistan"],
   /** Must also be set in Netlify's env vars (not just .env.local) — update if a custom domain replaces the Netlify subdomain. */
   url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://elyasbromand.netlify.app").replace(/\/+$/, ""),
   titleTemplate: "%s — Elyas Bromand",
-  defaultTitle: "Elyas Bromand — Full Stack Developer & Backend AI Engineer",
+  defaultTitle: "Elyas Bromand — Backend AI Engineer & Full-Stack Developer",
   defaultDescription:
-    "Elyas Bromand — Full Stack Developer & Backend AI Engineer at FlyRank AI and Webistan. Backend services, AI-integrated automation, and distributed systems.",
+    "Elyas Bromand is a backend and AI engineer who designs reliable APIs, integrates AI into production systems, and ships full-stack web applications end to end.",
   social: {
     github: "https://github.com/elyasbromand",
     linkedin: "https://www.linkedin.com/in/elyas-bromand",
