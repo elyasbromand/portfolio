@@ -9,20 +9,21 @@ import Certifications from "@/components/Certifications";
 import Experience from "@/components/Experience";
 import Contact from "@/components/Contact";
 import { getGithubStats } from "@/lib/github";
-import { siteConfig, personJsonLd } from "@/lib/seo";
+import { siteConfig, baseOpenGraph, personJsonLd } from "@/lib/seo";
 
 /** Hand-designed social-preview card in public/ (1200x630). Project pages keep their generated ones. */
 const ogImage = {
   url: "/og-image.png",
   width: 1200,
   height: 630,
+  type: "image/png",
   alt: `${siteConfig.name} — ${siteConfig.role}`,
 };
 
 export const metadata: Metadata = {
   description: siteConfig.defaultDescription,
   alternates: { canonical: "/" },
-  openGraph: { url: "/", images: [ogImage] },
+  openGraph: { ...baseOpenGraph, url: "/", images: [ogImage] },
   twitter: { card: "summary_large_image", images: [ogImage] },
 };
 

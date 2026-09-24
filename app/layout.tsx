@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { siteConfig } from "@/lib/seo";
+import { siteConfig, baseOpenGraph } from "@/lib/seo";
 
 const jetbrainsMono = localFont({
   src: [
@@ -51,12 +51,10 @@ export const metadata: Metadata = {
     apple: [{ url: "/favicon/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
-    type: "website",
-    siteName: siteConfig.name,
+    ...baseOpenGraph,
     title: siteConfig.defaultTitle,
     description: siteConfig.defaultDescription,
     url: siteConfig.url,
-    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",

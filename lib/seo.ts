@@ -14,12 +14,22 @@ export const siteConfig = {
   titleTemplate: "%s — Elyas Bromand",
   defaultTitle: "Elyas Bromand — Backend AI Engineer & Full-Stack Developer",
   defaultDescription:
-    "Elyas Bromand is a backend and AI engineer who designs reliable APIs, integrates AI into production systems, and ships full-stack web applications end to end.",
+    "Backend AI engineer and full-stack developer building reliable APIs, AI integrated systems, and web applications end to end.",
   social: {
     github: "https://github.com/elyasbromand",
     linkedin: "https://www.linkedin.com/in/elyas-bromand",
     email: "elyasbromand3@gmail.com",
   },
+} as const;
+
+/**
+ * Open Graph fields every page needs. Next.js merges `openGraph` shallowly, so
+ * a page that sets its own `openGraph` drops the layout's — spread this in.
+ */
+export const baseOpenGraph = {
+  type: "website",
+  siteName: siteConfig.name,
+  locale: "en_US",
 } as const;
 
 /** Composes a site-relative path into an absolute URL against `siteConfig.url`. */

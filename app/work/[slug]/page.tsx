@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fonts } from "@/lib/fonts";
 import { projects, getProjectByTag } from "@/data/portfolio";
+import { baseOpenGraph } from "@/lib/seo";
 import PageShell from "@/components/PageShell";
 import Nav from "@/components/Nav";
 import ProjectHeader from "@/components/ProjectHeader";
@@ -36,6 +37,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description,
     alternates: { canonical: path },
     openGraph: {
+      ...baseOpenGraph,
       type: "article",
       title,
       description,
