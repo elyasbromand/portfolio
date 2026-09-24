@@ -12,7 +12,7 @@ export const siteConfig = {
   /** Must also be set in Netlify's env vars (not just .env.local) — update if a custom domain replaces the Netlify subdomain. */
   url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://elyasbromand.netlify.app").replace(/\/+$/, ""),
   titleTemplate: "%s — Elyas Bromand",
-  defaultTitle: "Elyas Bromand — Backend AI Engineer & Full-Stack Developer",
+  defaultTitle: "Elyas Bromand — Backend Developer and AI Engineer",
   defaultDescription:
     "Backend AI engineer and full-stack developer building reliable APIs, AI integrated systems, and web applications end to end.",
   social: {
