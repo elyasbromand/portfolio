@@ -24,7 +24,7 @@ User-selected extras: **scroll progress bar** and **custom cursor** (desktop onl
 4. **Animate only transforms and opacity** (`x/y/xPercent/yPercent/scale/rotate/autoAlpha/clipPath`). Never animate width, height, top or left.
 5. **No CSS transitions on properties GSAP animates.** Remove `transition: transform` from `SelectedWork.module.css .card`, the Toolbox `data-drawn` transitions, and similar. Hover colour transitions that GSAP never touches can stay.
 6. **Don't let GSAP fight CSS keyframes.** Where an element already has a CSS `transform` loop (e.g. `.endpoint` → `cfFloat`), animate its *parent* (`.stage`) instead.
-7. **Prevent FOUC:** elements with `[data-reveal]` start hidden **only when JS is running**. An inline script adds `html.js`, and the CSS is `.js [data-reveal]{visibility:hidden}`. GSAP reveals them with `autoAlpha`. No-JS users and reduced-motion users see everything.
+7. **Prevent FOUC:** elements with `[data-reveal]` start hidden **only when JS is running**. An inline script sets `<html data-js>`, and the CSS is `[data-js] [data-reveal]{visibility:hidden}`. GSAP reveals them with `autoAlpha`. No-JS users and reduced-motion users see everything.
 8. **ScrollTrigger hygiene:** create triggers in DOM order. Use `once: true` for reveals and `ScrollTrigger.batch()` for lists. Use function-based `start`/`end` with `invalidateOnRefresh` for anything size-dependent. Call `ScrollTrigger.refresh()` after `document.fonts.ready`. Set `html { scroll-behavior: auto !important }`. Never nest a ScrollTrigger inside a child tween of a timeline.
 9. **Mobile is not a shrunken desktop.** Use `smoothTouch: 0.1` (GSAP's recommendation; heavy smoothing detached from the finger feels broken). No parallax, no tilt, no magnetic effects, and no cursor on touch. Use durations about 20% shorter and y-offsets about half size. Tap feedback (`scale: .98`) replaces hover.
 10. **Reduced motion:** smoothing is off and there are no parallax, scrub, scramble or typing effects. Reveals become a 0.2s opacity fade or appear instantly. Count-ups jump to the final value. Infinite CSS loops are already disabled by existing `@media (prefers-reduced-motion)` blocks; keep them and extend them to new loops.
@@ -49,10 +49,21 @@ Set `gsap.defaults({ ease: ease.out, duration: dur.md })` once.
 ---
 
 ## Phase 0 — Setup
-- [ ] Copy this plan to `my-portfolio/ANIMATE_PLAN.md`.
-- [ ] `FlowDiagram.tsx`, `FlowDiagram.module.css` and `Hero.tsx` have **uncommitted changes**. Commit them (or ask the user) before starting, then `git checkout -b feat/gsap-motion`.
-- [ ] `npm i gsap @gsap/react`.
-- [ ] Read `node_modules/next/dist/docs/` for anything that touches `layout.tsx` (inline `<script>` in `<head>`, `suppressHydrationWarning`), as `AGENTS.md` requires.
+- [x] Copy this plan to `my-portfolio/ANIMATE_PLAN.md`.
+- [x] Branch `feat/gsap-motion` created from `main`. The uncommitted FlowDiagram redesign and hero badge text were committed there on their own (`6808044`), and this plan was committed as `563ca2e`. `main` is untouched.
+- [x] `npm i gsap @gsap/react`: installed `gsap@^3.15.0` and `@gsap/react@^2.1.2`. The ScrollSmoother, SplitText, ScrambleText, DrawSVG, Text and ScrollTo plugins ship in the package. (`npm audit` reports existing `next` and `sharp` advisories that GSAP didn't introduce. They're out of scope here.)
+- [x] Read `node_modules/next/dist/docs/01-app/02-guides/preventing-flash-before-hydration.md`. Findings that apply to Phase 1:
+  - The official pattern is a plain `<script dangerouslySetInnerHTML>` inside `<head>` in `app/layout.tsx` plus `suppressHydrationWarning` on `<html>`. It runs during HTML parsing, before first paint.
+  - **Use a `data-js` attribute, not a class.** `<html className>` is managed by React (the font CSS variables), so a script-added class competes with React for that attribute.
+  - **Dev-only gotcha:** Strict Mode remounts reset `<html>` to only its JSX attributes, which clears `data-js`. `MotionRoot` must set it again in a `useLayoutEffect` (this does nothing in production).
+- [x] **Baseline** (Lighthouse 12, mobile preset, `next start`, before any motion work):
+
+  | route | perf | FCP | LCP | TBT | CLS | LCP element |
+  |---|---|---|---|---|---|---|
+  | `/` | 89 | 1.1 s | 3.7 s | 90 ms | 0 | hero `h1` |
+  | `/work/mcp-file-manager` | 86 | 0.9 s | 3.7 s | 210 ms | 0 | ProjectHeader tagline `p` |
+
+  LCP is already 3.7 s before any animation, which points to font-swap/render delay on the hero `h1`, not animation. Motion work must not push it higher. Keep the hero intro ≤ 1.3 s and never hide the `h1` behind `fonts.ready` for longer than necessary. CLS must stay at 0.
 
 ## Phase 1 — Motion infrastructure
 New files:
@@ -77,8 +88,8 @@ New files:
   | `data-magnetic` | quickTo x/y toward the pointer (strength .25, max 8px), `elastic` return **off** → `power3.out` | none | none |
   | `data-spotlight` | sets CSS vars `--mx/--my` via `quickSetter` for a radial-gradient glow following the cursor | none | none |
 
-- [ ] **`app/globals.css`:** add `html{scroll-behavior:auto!important}`, `.js [data-reveal]{visibility:hidden}` plus a `@media (prefers-reduced-motion: reduce)` override back to visible, and a shared `.spotlight::before` style that uses `--mx/--my`.
-- [ ] **`app/layout.tsx`:** inline `<script>` in `<head>` with `document.documentElement.classList.add('js')`, plus `suppressHydrationWarning` on `<html>`.
+- [ ] **`app/globals.css`:** add `html{scroll-behavior:auto!important}`, `[data-js] [data-reveal]{visibility:hidden}` plus a `@media (prefers-reduced-motion: reduce)` override back to visible, and a shared `.spotlight::before` style that uses `--mx/--my`.
+- [ ] **`app/layout.tsx`:** inline `<script>` in `<head>` with `document.documentElement.setAttribute('data-js','')`, plus `suppressHydrationWarning` on `<html>`. Also set it again from `MotionRoot` in a `useLayoutEffect` (see the Phase 0 findings).
 - [ ] **`components/PageShell.tsx` restructure** (required: ScrollSmoother transforms the content, which breaks `position: sticky/fixed` inside it):
   ```
   <div fixed grid backdrop/>            ← outside wrapper
@@ -209,6 +220,6 @@ Migrate the existing choreography from **IntersectionObserver + CSS transitions*
    - no hover-only effects fire on touch, and there's no cursor on touch;
    - resizing across 860 and 640 re-splits text correctly with no stuck transforms (matchMedia reverts).
 3. **Reduced motion:** DevTools → Rendering → emulate `prefers-reduced-motion: reduce`. Expect native scrolling, all content visible immediately, final numbers, and a fully printed terminal.
-4. **JS disabled:** all content visible (the `html.js` gate).
+4. **JS disabled:** all content visible (the `html[data-js]` gate).
 5. **Performance:** Lighthouse mobile on `/`, with CLS ≈ 0 and LCP not worse than the pre-change baseline (record the baseline in Phase 0). The Performance panel should show no long tasks from scroll handlers and a steady 60fps while scrolling.
 6. Real phone check if possible (iOS Safari address-bar show/hide shouldn't cause jumps; `ignoreMobileResize` is on).
