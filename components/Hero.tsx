@@ -30,7 +30,7 @@ export default function Hero() {
               boxShadow: "0 0 8px #7ee787",
             }}
           />
-          available for backend / Infrastructure roles
+          available for backend / AI roles
         </div>
 
         <h1
