@@ -72,7 +72,17 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${jetbrainsMono.variable} ${spaceGrotesk.variable} ${publicSans.variable}`}
+      suppressHydrationWarning
     >
+      <head>
+        {/* Runs during HTML parsing, before first paint: marks JS as available
+            so [data-reveal] elements start hidden instead of flashing. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.setAttribute("data-js","")`,
+          }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

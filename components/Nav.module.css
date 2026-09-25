@@ -1,3 +1,11 @@
+/* Rendered inside PageShell's fixed, click-through nav layer. Height comes
+   from --nav-h (globals.css) so the content spacer always matches. */
+.nav {
+  position: relative;
+  height: var(--nav-h);
+  pointer-events: auto;
+}
+
 .links {
   display: flex;
   gap: 28px;

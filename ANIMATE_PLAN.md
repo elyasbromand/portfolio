@@ -26,7 +26,11 @@ User-selected extras: **scroll progress bar** and **custom cursor** (desktop onl
 6. **Don't let GSAP fight CSS keyframes.** Where an element already has a CSS `transform` loop (e.g. `.endpoint` → `cfFloat`), animate its *parent* (`.stage`) instead.
 7. **Prevent FOUC:** elements with `[data-reveal]` start hidden **only when JS is running**. An inline script sets `<html data-js>`, and the CSS is `[data-js] [data-reveal]{visibility:hidden}`. GSAP reveals them with `autoAlpha`. No-JS users and reduced-motion users see everything.
 8. **ScrollTrigger hygiene:** create triggers in DOM order. Use `once: true` for reveals and `ScrollTrigger.batch()` for lists. Use function-based `start`/`end` with `invalidateOnRefresh` for anything size-dependent. Call `ScrollTrigger.refresh()` after `document.fonts.ready`. Set `html { scroll-behavior: auto !important }`. Never nest a ScrollTrigger inside a child tween of a timeline.
-9. **Mobile is not a shrunken desktop.** Use `smoothTouch: 0.1` (GSAP's recommendation; heavy smoothing detached from the finger feels broken). No parallax, no tilt, no magnetic effects, and no cursor on touch. Use durations about 20% shorter and y-offsets about half size. Tap feedback (`scale: .98`) replaces hover.
+9. **Mobile is not a shrunken desktop.** **Touch scrolling (decided): `smoothTouch: 0.05` with native touch input, and no `normalizeScroll`.** The user chose it by feel on a real phone, after comparing three modes through a temporary dev-only `?touch=` switch that has since been removed. History:
+   1. `smoothTouch: 0.1` made content **vibrate**. Native touch scrolling runs on the compositor thread and the smoother's transform on the main thread, so they drift a frame apart. Keep the value low.
+   2. `smoothTouch: 0.05` + `normalizeScroll: true` flung **small swipes far down**. GSAP's normalizeScroll adds its own release momentum, 2.8s by default (read from `ScrollTrigger.js`). A gentler `momentum: 0.8` variant and native-only scrolling were also tried; the user preferred `light`.
+
+   No parallax, no tilt, no magnetic effects, and no cursor on touch. Use durations about 20% shorter and y-offsets about half size. Tap feedback (`scale: .98`) replaces hover.
 10. **Reduced motion:** smoothing is off and there are no parallax, scrub, scramble or typing effects. Reveals become a 0.2s opacity fade or appear instantly. Count-ups jump to the final value. Infinite CSS loops are already disabled by existing `@media (prefers-reduced-motion)` blocks; keep them and extend them to new loops.
 11. **Pause work that's offscreen:** infinite loops (FlowDiagram SMIL, sparkline, `blink` dots) are paused when out of view (`svg.pauseAnimations()` / `animation-play-state`) with a `ScrollTrigger` `onToggle`.
 12. **Pinning:** no pinned sections. Pin-heavy scroll-jacking hurts a content-first portfolio and misbehaves on mobile address-bar resizes.
@@ -41,10 +45,12 @@ export const ease = { out: "power3.out", outStrong: "expo.out", inOut: "power2.i
 export const dur  = { xs: .2, sm: .35, md: .6, lg: .9, xl: 1.2 };
 export const stagger = { tight: .04, base: .08, loose: .12 };
 export const offset = { desktop: 32, mobile: 16 };   // y distance for reveals
-export const NAV_HEIGHT = 84;                          // keep in sync with Nav padding
+export const MOBILE_TIME_SCALE = 0.8;
 export const mq = { /* the matchMedia conditions object from rule 3 */ };
 ```
 Set `gsap.defaults({ ease: ease.out, duration: dur.md })` once.
+
+Nav height and the anchor landing offset are **CSS variables**, not JS constants (implemented in Phase 1): `--nav-h` is 92px, or 101px at ≤640px, which matches the old nav's exact height; `--anchor-offset` is 64px, the old `scroll-margin-top`. Both are defined in `app/globals.css`, and `lib/scroll.ts` reads `--anchor-offset`, so CSS and JS can't drift apart.
 
 ---
 
@@ -66,15 +72,20 @@ Set `gsap.defaults({ ease: ease.out, duration: dur.md })` once.
   LCP is already 3.7 s before any animation, which points to font-swap/render delay on the hero `h1`, not animation. Motion work must not push it higher. Keep the hero intro ≤ 1.3 s and never hide the `h1` behind `fonts.ready` for longer than necessary. CLS must stay at 0.
 
 ## Phase 1 — Motion infrastructure
+> **Status: implemented, awaiting the user's review before commit.** Differences from the original plan are marked *Built:* below.
+
 New files:
-- [ ] **`lib/gsap.ts`** (`"use client"`): imports and registers `ScrollTrigger, ScrollSmoother, SplitText, ScrambleTextPlugin, DrawSVGPlugin, TextPlugin, ScrollToPlugin, useGSAP` once, sets defaults, and sets `ScrollTrigger.config({ ignoreMobileResize: true })`. Everything imports `gsap` from here, never directly.
-- [ ] **`lib/motion.ts`**: tokens (above).
-- [ ] **`components/motion/SmoothScroll.tsx`** (client): renders `#smooth-wrapper > #smooth-content` and creates `ScrollSmoother.create({ smooth: 1, smoothTouch: 0.1, effects: false, normalizeScroll: false })` inside `mm.add` so it runs **only when `!reduceMotion`**. Also:
-  - exposes the instance through a small context/`getSmoother()` helper;
-  - **hash links:** a delegated click handler for `a[href^="/#"], a[href^="#"]` on the same pathname calls `preventDefault()`, then `smoother.scrollTo(target, true, `top ${NAV_HEIGHT}px`)`, then `history.pushState`. When there's no smoother, it falls back to native scrolling;
-  - **arriving with a hash** (e.g. `/work/x` → `/#work`): after creation, `document.fonts.ready` and `ScrollTrigger.refresh()`, it calls `scrollTo(hash, false, …)`;
+- [x] **`lib/scroll.ts`** *(added)*: `scrollToTarget(el | y, smooth)` uses ScrollSmoother when it's active and native scrolling otherwise; also `anchorOffset()` and `hashTarget()`. Later phases use it for the logo click, back to top, and so on.
+- [x] **`lib/gsap.ts`** (`"use client"`): imports and registers `ScrollTrigger, ScrollSmoother, SplitText, ScrambleTextPlugin, DrawSVGPlugin, TextPlugin, ScrollToPlugin, useGSAP` once, sets defaults, and sets `ScrollTrigger.config({ ignoreMobileResize: true })`. Everything imports `gsap` from here, never directly.
+- [x] **`lib/motion.ts`**: tokens (above).
+- [x] **`components/motion/SmoothScroll.tsx`** (client): renders `#smooth-wrapper > #smooth-content` and creates `ScrollSmoother.create({ smooth: 1, smoothTouch: 0.05, effects: false, normalizeScroll: false })` inside `mm.add("(prefers-reduced-motion: no-preference)")`. See rule 9 for how the touch value was chosen. Also:
+  - *Built:* the instance is reached with GSAP's own `ScrollSmoother.get()` (inside `lib/scroll.ts`), so no context was needed;
+  - **hash links:** a delegated **capture-phase** click handler for same-origin, same-path `#hash` links calls `preventDefault()`, then `scrollToTarget(el)`, then `history.pushState(null, "", hash)`. It's verified in Next's source that `next/link` still runs its own `onClick` (so the mobile menu closes) but skips navigation when `defaultPrevented` is set. When there's no smoother, it does nothing and native scrolling handles the link;
+  - **arriving with a hash** (e.g. `/work/x` → `/#work`, or a reload on `/#experience`): after `document.fonts.ready` it runs `ScrollTrigger.refresh()` and then an instant `scrollToTarget`;
+  - *Built:* **back/forward and address-bar hash changes.** Found in testing: the browser's own fragment jump scrolls the `overflow:hidden` `#smooth-wrapper` instead of the page, which silently shifts the whole site inside it (the top becomes unreachable). Fixed with a `scroll` listener on the wrapper that resets it to 0 and routes the jump through the smoother, plus a `hashchange` listener;
+  - *Built:* React runs child effects before parent effects, so in-page ScrollTriggers exist before the smoother. `ScrollTrigger.refresh()` runs right after `create()`;
   - on unmount it runs `smoother.kill()`. Because `PageShell` re-mounts per route, SPA navigation is clean.
-- [ ] **`components/motion/MotionRoot.tsx`** (client, lives inside `#smooth-content`): one `useGSAP` over the whole page that wires up the declarative attributes:
+- [x] **`components/motion/MotionRoot.tsx`** (client, lives inside `#smooth-content`): one `useGSAP` over the whole page that wires up the declarative attributes:
 
   | attribute | effect (desktop) | mobile | reduced motion |
   |---|---|---|---|
@@ -88,9 +99,10 @@ New files:
   | `data-magnetic` | quickTo x/y toward the pointer (strength .25, max 8px), `elastic` return **off** → `power3.out` | none | none |
   | `data-spotlight` | sets CSS vars `--mx/--my` via `quickSetter` for a radial-gradient glow following the cursor | none | none |
 
-- [ ] **`app/globals.css`:** add `html{scroll-behavior:auto!important}`, `[data-js] [data-reveal]{visibility:hidden}` plus a `@media (prefers-reduced-motion: reduce)` override back to visible, and a shared `.spotlight::before` style that uses `--mx/--my`.
-- [ ] **`app/layout.tsx`:** inline `<script>` in `<head>` with `document.documentElement.setAttribute('data-js','')`, plus `suppressHydrationWarning` on `<html>`. Also set it again from `MotionRoot` in a `useLayoutEffect` (see the Phase 0 findings).
-- [ ] **`components/PageShell.tsx` restructure** (required: ScrollSmoother transforms the content, which breaks `position: sticky/fixed` inside it):
+  *Built:* under reduced motion **every** reveal is instant (CSS shows it and JS adds no motion), rather than some being 0.2s fades. That's simpler and can't flash. The scramble reveal uses `fromTo` for its visibility step, because a `.set()` at time 0 of a scroll-triggered timeline renders immediately and revealed the element early (caught in testing). **Rule:** don't combine `data-magnetic` with a transform-based reveal on the same element; wrap one in the other.
+- [x] **`app/globals.css`:** added `html{scroll-behavior:auto!important}`, the `--nav-h`/`--anchor-offset` variables, and the `[data-js]` reveal gate. *Built:* the gate hides `[data-reveal]` except `="stagger"` containers, whose `[data-reveal-item]` descendants are hidden instead, plus the reduced-motion override. The spotlight is `[data-spotlight]::after` (opt-in, fine pointers only) instead of a `.spotlight::before` class, to avoid clashing with existing `::before` decorations such as the FlowDiagram panel.
+- [x] **`app/layout.tsx`:** inline `<script>` in `<head>` with `document.documentElement.setAttribute('data-js','')`, plus `suppressHydrationWarning` on `<html>`. Also set it again from `MotionRoot` in a `useLayoutEffect` (see the Phase 0 findings).
+- [x] **`components/PageShell.tsx` restructure** (required: ScrollSmoother transforms the content, which breaks `position: sticky/fixed` inside it):
   ```
   <div fixed grid backdrop/>            ← outside wrapper
   <Nav/> (now position: fixed)          ← outside wrapper, rendered by PageShell
@@ -99,8 +111,10 @@ New files:
      <div container>{children}</div>
   </MotionRoot></SmoothScroll>
   ```
-  Remove `<Nav />` from `app/page.tsx` and `app/work/[slug]/page.tsx`. `PageShell` now owns it (one place, as the `CLAUDE.md` philosophy suggests). Add a top spacer of `NAV_HEIGHT` in the content. Update `section[id]{scroll-margin-top}` to the nav height for the native fallback path.
-- [ ] Verify: `npm run build` passes; smooth scrolling works on desktop, is barely smoothed on a phone, and is off under reduced motion; nav links still land correctly (same page and cross page); the browser back button works.
+  Remove `<Nav />` from `app/page.tsx` and `app/work/[slug]/page.tsx`. `PageShell` now owns it (one place, as the `CLAUDE.md` philosophy suggests). Add a top spacer of nav height in the content.
+  *Built:* the fixed layer (`.navLayer`) is full-width but click-through, and the `<nav>` bar sits inside the same 1160px container as before. So it looks identical to the old sticky nav: the same width, and the same gutters where content shows at the sides. The spacer and nav both use `height: var(--nav-h)`, so the hero starts exactly where it used to (verified at 92px desktop and 101px phone). `scroll-margin-top` stays at the old 64px through `--anchor-offset`, so anchors land where they always did. `<ScrollProgress/>` and `<Cursor/>` are added in Phase 2.
+- [x] Verify (headless Chrome via puppeteer-core against `next start`; desktop 1440, phone 390 with touch emulation, desktop with reduced motion): the build passes; the smoother is active on desktop and on the phone (`smoothTouch: 0.05`, no normalizeScroll) and off under reduced motion; the nav stays at top 0 while scrolling; nav links, the hero `#work` link and the mobile-menu links land the target at exactly 64px, and the menu closes; `/work/x` → "Back to work" lands `#work` at 64px; a reload on `/#experience` lands at 64px; back/forward and address-bar hash changes land at 64px with the wrapper staying at 0 and scrolling consistent afterwards; no console errors.
+  The reveal engine was tested with **temporary** attributes on Contact/SectionHeading (reverted afterwards). Below-the-fold elements stay hidden until reached; `up`, `lines`, `scramble`, `rule` and `stagger` all end fully visible with no stray transforms; a reload at the bottom reveals everything; a resize from 1440 to 800 re-splits lines; magnetic drifts to +8px and returns to 0; spotlight works; reduced motion shows everything with no split and no transforms.
 
 ## Phase 2 — Global chrome: Nav, progress bar, cursor
 **Nav (`components/Nav.tsx`, already a client component)**

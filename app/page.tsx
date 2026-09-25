@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
-import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Metrics from "@/components/Metrics";
 import SelectedWork from "@/components/SelectedWork";
@@ -36,7 +35,6 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd()) }}
       />
-      <Nav />
       <Hero />
       <Metrics stats={githubStats} />
       <SelectedWork />

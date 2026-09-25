@@ -1,6 +1,15 @@
 import { fonts } from "@/lib/fonts";
+import Nav from "./Nav";
+import SmoothScroll from "./motion/SmoothScroll";
+import MotionRoot from "./motion/MotionRoot";
 import styles from "./PageShell.module.css";
 
+/**
+ * Shared page chrome for every route. Fixed-position layers (grid backdrop,
+ * Nav) sit OUTSIDE <SmoothScroll>: ScrollSmoother transforms its content,
+ * which would break `position: fixed/sticky` inside it. That's also why the
+ * Nav lives here rather than in each route.
+ */
 export default function PageShell({ children }: { children: React.ReactNode }) {
   return (
     <div
@@ -27,7 +36,21 @@ export default function PageShell({ children }: { children: React.ReactNode }) {
         }}
       />
 
-      <div className={styles.container}>{children}</div>
+      <div className={styles.navLayer}>
+        <div className={styles.container}>
+          <Nav />
+        </div>
+      </div>
+
+      <SmoothScroll>
+        <MotionRoot>
+          <div className={styles.container}>
+            {/* reserves the fixed Nav's height so the layout matches the old sticky nav */}
+            <div aria-hidden="true" className={styles.navSpacer} />
+            {children}
+          </div>
+        </MotionRoot>
+      </SmoothScroll>
     </div>
   );
 }

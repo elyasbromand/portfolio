@@ -26,17 +26,14 @@ export default function Nav() {
 
   return (
     <nav
+      className={styles.nav}
       style={{
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "28px 0",
         borderBottom: "1px solid rgba(255,255,255,0.07)",
-        position: "sticky",
-        top: 0,
         background: "rgba(10,11,13,0.82)",
         backdropFilter: "blur(10px)",
-        zIndex: 10,
       }}
     >
       <Link
