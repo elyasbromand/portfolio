@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { fonts } from "@/lib/fonts";
 import { useCountUp } from "@/lib/useCountUp";
 import type { StatValue } from "@/data/portfolio";
@@ -9,11 +10,12 @@ interface ProjectStatsProps {
 }
 
 function StatCard({ stat }: { stat: StatValue }) {
-  const animated = useCountUp(stat.value);
+  const ref = useRef<HTMLDivElement>(null);
+  const animated = useCountUp(stat.value, { ref, decimals: stat.decimals ?? 0 });
   const text = `${stat.prefix ?? ""}${animated.toFixed(stat.decimals ?? 0)}${stat.suffix ?? ""}`;
 
   return (
-    <div style={{ background: "#0d0f12", padding: "26px 24px" }}>
+    <div ref={ref} style={{ background: "#0d0f12", padding: "26px 24px" }}>
       <div
         style={{
           fontFamily: fonts.display,
@@ -23,6 +25,7 @@ function StatCard({ stat }: { stat: StatValue }) {
           lineHeight: 1,
           letterSpacing: "-0.02em",
           marginBottom: 10,
+          fontVariantNumeric: "tabular-nums",
         }}
       >
         {text}

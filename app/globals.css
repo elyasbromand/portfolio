@@ -7,8 +7,66 @@
   box-sizing: border-box;
 }
 
+/* --nav-h: height of the fixed Nav bar (the content spacer in PageShell
+   matches it, so the layout is identical to the old sticky nav).
+   --anchor-offset: where anchor targets land below the viewport top — used
+   by scroll-margin-top natively and by ScrollSmoother via lib/scroll.ts. */
+:root {
+  --nav-h: 92px;
+  --anchor-offset: 64px;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --nav-h: 101px;
+  }
+}
+
+/* ScrollTrigger measures wrongly with CSS smooth scrolling. */
+html {
+  scroll-behavior: auto !important;
+}
+
 body {
   background: #0a0b0d;
+}
+
+/* Motion: [data-reveal] elements start hidden only when JS is running
+   (<html data-js> is set by an inline script in app/layout.tsx); GSAP reveals
+   them with autoAlpha. No-JS and reduced-motion visitors see everything. */
+[data-js] [data-reveal]:not([data-reveal="stagger"]),
+[data-js] [data-reveal="stagger"] [data-reveal-item] {
+  visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-js] [data-reveal]:not([data-reveal="stagger"]),
+  [data-js] [data-reveal="stagger"] [data-reveal-item] {
+    visibility: visible;
+  }
+}
+
+/* data-spotlight: accent glow that follows the pointer (--mx/--my/--spot are
+   set by MotionRoot, fine pointers only). */
+[data-spotlight] {
+  position: relative;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-spotlight]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+      260px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(126, 231, 135, 0.08),
+      transparent 70%
+    );
+    opacity: var(--spot, 0);
+    transition: opacity 0.3s ease;
+  }
 }
 
 ::selection {
@@ -19,7 +77,7 @@ body {
 /* Nav anchor targets: stop the sticky Nav from covering the section heading
    when jumping to /#work, /#stack, etc. */
 section[id] {
-  scroll-margin-top: 64px;
+  scroll-margin-top: var(--anchor-offset);
 }
 
 a {

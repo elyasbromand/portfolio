@@ -1,5 +1,5 @@
 import { fonts } from "@/lib/fonts";
-import type { ArchitectureStage } from "@/data/portfolio";
+import type { ArchitectureNode, ArchitectureStage } from "@/data/portfolio";
 import styles from "./FlowDiagram.module.css";
 
 export interface FlowDiagramProps {
@@ -7,44 +7,149 @@ export interface FlowDiagramProps {
   stages: ArchitectureStage[];
 }
 
-const heroNodeStyle: React.CSSProperties = {
-  flex: "0 0 auto",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: 8,
-  background: "#141619",
-  border: "1px solid rgba(255,255,255,0.1)",
-  borderRadius: 10,
-  padding: "18px 20px",
-  minWidth: 120,
-  textAlign: "center",
-};
+const NEUTRAL = "#c7cbd1";
+const ACCENT = "#7ee787";
+const NEUTRAL_SUB = "#6b7178";
+const ACCENT_SUB = "rgba(126,231,135,0.6)";
+const NEUTRAL_BORDER = "rgba(230,232,235,0.32)";
+const ACCENT_BORDER = "rgba(126,231,135,0.55)";
+const NEUTRAL_BG = "rgba(255,255,255,0.025)";
+const ACCENT_BG = "rgba(126,231,135,0.06)";
+const EDGE_COLOR = "rgba(126,231,135,0.4)";
 
-const heroNodeAccentStyle: React.CSSProperties = {
-  ...heroNodeStyle,
-  background: "rgba(126,231,135,0.06)",
-  border: "1px solid rgba(126,231,135,0.28)",
-};
+type Kind = "endpoint" | "hub" | "process";
 
-const listNodeStyle: React.CSSProperties = {
-  background: "#141619",
-  border: "1px solid rgba(255,255,255,0.1)",
-  borderRadius: 10,
-  padding: "12px 18px",
-  minWidth: 150,
-  fontFamily: fonts.mono,
-  fontSize: 12,
-  color: "#e6e8eb",
-};
+function kindForStage(stage: ArchitectureStage, index: number, total: number): Kind {
+  if (stage.nodes.length !== 1) return "process";
+  if (index === 0 || index === total - 1) return "endpoint";
+  if (stage.nodes[0].accent) return "hub";
+  return "process";
+}
 
-const listNodeAccentStyle: React.CSSProperties = {
-  ...listNodeStyle,
-  background: "#0f1418",
-  border: "1px solid rgba(126,231,135,0.2)",
-  color: "#a2a8b0",
-};
+function Connector({ id }: { id: string }) {
+  return (
+    <div className={styles.connector}>
+      <svg
+        className={styles.connectorSvg}
+        width="52"
+        height="34"
+        viewBox="0 0 52 34"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          id={id}
+          d="M2,17 C16,9 36,25 50,17"
+          stroke={EDGE_COLOR}
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeDasharray="4 5"
+        >
+          <animate attributeName="stroke-dashoffset" values="0;-18" dur="1.1s" repeatCount="indefinite" />
+        </path>
+        <circle r="2.1" fill={ACCENT}>
+          <animateMotion dur="2s" repeatCount="indefinite">
+            <mpath href={`#${id}`} />
+          </animateMotion>
+        </circle>
+      </svg>
+    </div>
+  );
+}
+
+function EndpointNode({ node }: { node: ArchitectureNode }) {
+  const color = node.accent ? ACCENT : NEUTRAL;
+  return (
+    <div className={styles.endpoint} style={{ color }}>
+      <span className={styles.endpointLabel} style={{ fontFamily: fonts.mono }}>
+        {node.label}
+      </span>
+      <div className={styles.endpointBox}>
+        <span className={styles.core} />
+        <span className={`${styles.corner} ${styles.cornerTL}`} />
+        <span className={`${styles.corner} ${styles.cornerTR}`} />
+        <span className={`${styles.corner} ${styles.cornerBL}`} />
+        <span className={`${styles.corner} ${styles.cornerBR}`} />
+      </div>
+      {node.sublabel && (
+        <span className={styles.endpointSub} style={{ fontFamily: fonts.mono }}>
+          {node.sublabel}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function HubNode({ node }: { node: ArchitectureNode }) {
+  return (
+    <div
+      className={styles.hub}
+      style={{
+        color: ACCENT,
+        background: ACCENT_BG,
+        border: `1px solid ${ACCENT_BORDER}`,
+      }}
+    >
+      <div className={styles.hubGlow} />
+      <svg className={styles.hubBorder} aria-hidden="true">
+        <rect
+          x="0.75"
+          y="0.75"
+          width="calc(100% - 1.5px)"
+          height="calc(100% - 1.5px)"
+          rx="20"
+          ry="20"
+          fill="none"
+          stroke={ACCENT_BORDER}
+          strokeWidth="1.5"
+          strokeDasharray="8 8"
+          strokeLinecap="round"
+        >
+          <animate attributeName="stroke-dashoffset" values="0;-16" dur="1.6s" repeatCount="indefinite" />
+        </rect>
+      </svg>
+      <div className={styles.hubContent}>
+        <span className={styles.hubLabel} style={{ fontFamily: fonts.mono, color: ACCENT }}>
+          {node.label}
+        </span>
+        {node.sublabel && (
+          <span className={styles.hubSub} style={{ fontFamily: fonts.mono, color: ACCENT_SUB }}>
+            {node.sublabel}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ProcessBox({ node, delay }: { node: ArchitectureNode; delay: number }) {
+  const accent = Boolean(node.accent);
+  return (
+    <div
+      className={styles.processBox}
+      style={{
+        background: accent ? ACCENT_BG : NEUTRAL_BG,
+        borderColor: accent ? ACCENT_BORDER : NEUTRAL_BORDER,
+        animationDelay: `${delay}s`,
+      }}
+    >
+      <span
+        className={styles.processLabel}
+        style={{ fontFamily: fonts.mono, color: accent ? ACCENT : "#e6e8eb" }}
+      >
+        {node.label}
+      </span>
+      {node.sublabel && (
+        <span
+          className={styles.processSub}
+          style={{ fontFamily: fonts.mono, color: accent ? ACCENT_SUB : NEUTRAL_SUB }}
+        >
+          {node.sublabel}
+        </span>
+      )}
+    </div>
+  );
+}
 
 export default function FlowDiagram({ caption, stages }: FlowDiagramProps) {
   return (
@@ -54,41 +159,25 @@ export default function FlowDiagram({ caption, stages }: FlowDiagramProps) {
       </div>
 
       <div className={styles.flowRow}>
-        {stages.map((stage, i) => (
-          <div key={i} className={styles.stage}>
-            {stage.nodes.length === 1 ? (
-              <div style={stage.nodes[0].accent ? heroNodeAccentStyle : heroNodeStyle}>
-                <span
-                  style={{
-                    fontFamily: fonts.mono,
-                    fontSize: 12,
-                    color: stage.nodes[0].accent ? "#7ee787" : "#e6e8eb",
-                  }}
-                >
-                  {stage.nodes[0].label}
-                </span>
-                {stage.nodes[0].sublabel && (
-                  <span style={{ fontSize: 11, color: "#6b7178" }}>{stage.nodes[0].sublabel}</span>
-                )}
-              </div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, justifyContent: "center" }}>
-                {stage.nodes.map((node, j) => (
-                  <div key={j} style={node.accent ? listNodeAccentStyle : listNodeStyle}>
-                    {node.label}
-                    {node.sublabel && <span style={{ color: "#565b63" }}> {node.sublabel}</span>}
-                  </div>
-                ))}
-              </div>
-            )}
+        {stages.map((stage, i) => {
+          const kind = kindForStage(stage, i, stages.length);
 
-            {i < stages.length - 1 && (
-              <div className={styles.arrow} style={{ fontFamily: fonts.mono }}>
-                →
-              </div>
-            )}
-          </div>
-        ))}
+          return (
+            <div key={i} className={styles.stage}>
+              {kind === "endpoint" && <EndpointNode node={stage.nodes[0]} />}
+              {kind === "hub" && <HubNode node={stage.nodes[0]} />}
+              {kind === "process" && (
+                <div className={styles.processList}>
+                  {stage.nodes.map((node, j) => (
+                    <ProcessBox key={j} node={node} delay={(i * stage.nodes.length + j) * 0.3} />
+                  ))}
+                </div>
+              )}
+
+              {i < stages.length - 1 && <Connector id={`flow-edge-${i}`} />}
+            </div>
+          );
+        })}
       </div>
     </>
   );

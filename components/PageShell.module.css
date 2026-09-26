@@ -6,6 +6,10 @@
   padding: 0 32px;
 }
 
+.navSpacer {
+  height: var(--nav-h);
+}
+
 @media (max-width: 860px) {
   .container {
     padding: 0 24px;

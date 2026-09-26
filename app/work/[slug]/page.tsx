@@ -5,7 +5,6 @@ import { fonts } from "@/lib/fonts";
 import { projects, getProjectByTag } from "@/data/portfolio";
 import { baseOpenGraph } from "@/lib/seo";
 import PageShell from "@/components/PageShell";
-import Nav from "@/components/Nav";
 import ProjectHeader from "@/components/ProjectHeader";
 import ProjectStats from "@/components/ProjectStats";
 import SectionHeading from "@/components/SectionHeading";
@@ -59,7 +58,6 @@ export default async function ProjectPage({ params }: PageProps) {
 
   return (
     <PageShell>
-      <Nav />
 
       <div style={{ paddingTop: 28 }}>
         <Link

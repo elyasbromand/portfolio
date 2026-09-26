@@ -1,7 +1,83 @@
+/* Fixed header layer (outside the smoothed content — see PageShell): full
+   width but click-through; only the <nav> bar takes pointer events. The
+   whole layer slides up to hide, leaving the progress line at the top edge. */
+.layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+@media (max-width: 860px) {
+  .container {
+    padding: 0 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 16px;
+  }
+}
+
+/* Height comes from --nav-h (globals.css) so PageShell's spacer matches.
+   --nav-bg-a / --nav-border-a are tweened by GSAP once the page scrolls. */
+.nav {
+  --nav-bg-a: 0.82;
+  --nav-border-a: 0.07;
+  position: relative;
+  height: var(--nav-h);
+  pointer-events: auto;
+}
+
+/* Hidden until the GSAP intro runs (JS only; reduced motion shows it). */
+:global([data-js]) .nav {
+  visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global([data-js]) .nav {
+    visibility: visible;
+  }
+}
+
 .links {
+  position: relative;
   display: flex;
   gap: 28px;
   align-items: center;
+}
+
+.link {
+  color: #8b9199;
+  transition: color 0.2s;
+}
+
+.link:hover,
+.link[data-active="true"] {
+  color: #e6e8eb;
+}
+
+/* Active-section bar: 1px wide, scaled to the link's width by GSAP. */
+.indicator {
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  width: 1px;
+  height: 2px;
+  background: #7ee787;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .hamburger {
@@ -9,8 +85,18 @@
 }
 
 .hireMe {
+  position: relative;
+  overflow: hidden;
   padding: 7px 14px;
   white-space: nowrap;
+}
+
+.hireFill {
+  position: absolute;
+  inset: 0;
+  background: #b4f5b8;
+  transform: scaleX(0);
+  pointer-events: none;
 }
 
 @media (max-width: 860px) {
@@ -20,13 +106,11 @@
 }
 
 @media (max-width: 640px) {
+  /* The links become a drop-down panel; GSAP wipes it open/closed. It stays
+     hidden until the menu timeline reveals it. */
   .links {
-    display: none;
-  }
-
-  .linksOpen {
-    display: flex;
     flex-direction: column;
+    align-items: stretch;
     position: absolute;
     top: 100%;
     left: 0;
@@ -36,20 +120,46 @@
     padding: 20px 24px;
     gap: 4px;
     z-index: 20;
+    visibility: hidden;
   }
 
-  .linksOpen a {
+  .links a {
     display: block;
     width: 100%;
     padding: 12px 4px;
   }
 
+  .indicator {
+    display: none;
+  }
+
   .hamburger {
+    position: relative;
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
     width: 44px;
     height: 44px;
+  }
+
+  /* ☰ drawn as three bars so GSAP can morph it into ✕. */
+  .hamburger span {
+    position: absolute;
+    left: 13px;
+    width: 18px;
+    height: 1.5px;
+    border-radius: 1px;
+    background: currentColor;
+  }
+
+  .hamburger span:nth-child(1) {
+    top: 15.25px;
+  }
+
+  .hamburger span:nth-child(2) {
+    top: 21.25px;
+  }
+
+  .hamburger span:nth-child(3) {
+    top: 27.25px;
   }
 
   .hireMe {
