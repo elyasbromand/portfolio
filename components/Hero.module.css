@@ -10,6 +10,62 @@
   justify-self: end;
 }
 
+/* Badge dot: an infinite "ping" ring drawn as a ::after so nothing needs to
+   coordinate with it — ambient decoration only, not part of the timeline. */
+.dot {
+  position: relative;
+}
+
+.dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #7ee787;
+  animation: heroPing 1.8s ease-out infinite;
+}
+
+@keyframes heroPing {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Typed-line caret: blinks while HeroMotion types the line in, then it fades
+   it out (see the load timeline). Reuses the global `blink` keyframe. */
+.caret {
+  display: inline-block;
+  width: 6px;
+  height: 12px;
+  margin-left: 2px;
+  background: #7ee787;
+  vertical-align: -1px;
+  animation: blink 0.9s step-end infinite;
+}
+
+/* "View selected work" arrow: a plain CSS hover nudge — nothing else
+   animates this element's transform, so it doesn't need GSAP. */
+.arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.primaryCta:hover .arrow {
+  transform: translateX(4px);
+}
+
 @media (max-width: 860px) {
   .grid {
     grid-template-columns: 1fr;
