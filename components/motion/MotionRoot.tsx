@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap, useGSAP, ScrollTrigger, SplitText } from "@/lib/gsap";
 import { dur, ease, mq, offset, stagger, MOBILE_TIME_SCALE, type MotionConditions } from "@/lib/motion";
+import { magnetic, spotlight } from "@/lib/pointer";
 
 /**
  * Declarative motion for server components: they only add data-attributes,
@@ -124,49 +125,8 @@ export default function MotionRoot({ children }: { children: React.ReactNode }) 
 
         // Pointer effects — fine pointers only (never on touch).
         const cleanups: Array<() => void> = [];
-
-        all("[data-magnetic]").forEach((el) => {
-          const xTo = gsap.quickTo(el, "x", { duration: 0.4, ease: ease.out });
-          const yTo = gsap.quickTo(el, "y", { duration: 0.4, ease: ease.out });
-          const clamp = gsap.utils.clamp(-8, 8);
-          const move = (e: PointerEvent) => {
-            const r = el.getBoundingClientRect();
-            xTo(clamp((e.clientX - (r.left + r.width / 2)) * 0.25));
-            yTo(clamp((e.clientY - (r.top + r.height / 2)) * 0.25));
-          };
-          const leave = () => {
-            xTo(0);
-            yTo(0);
-          };
-          el.addEventListener("pointermove", move);
-          el.addEventListener("pointerleave", leave);
-          cleanups.push(() => {
-            el.removeEventListener("pointermove", move);
-            el.removeEventListener("pointerleave", leave);
-          });
-        });
-
-        all("[data-spotlight]").forEach((el) => {
-          const setX = gsap.quickSetter(el, "--mx", "px");
-          const setY = gsap.quickSetter(el, "--my", "px");
-          const move = (e: PointerEvent) => {
-            const r = el.getBoundingClientRect();
-            setX(e.clientX - r.left);
-            setY(e.clientY - r.top);
-          };
-          const enter = () => el.style.setProperty("--spot", "1");
-          const leave = () => el.style.setProperty("--spot", "0");
-          el.addEventListener("pointermove", move);
-          el.addEventListener("pointerenter", enter);
-          el.addEventListener("pointerleave", leave);
-          cleanups.push(() => {
-            el.removeEventListener("pointermove", move);
-            el.removeEventListener("pointerenter", enter);
-            el.removeEventListener("pointerleave", leave);
-            el.style.removeProperty("--spot");
-          });
-        });
-
+        all("[data-magnetic]").forEach((el) => cleanups.push(magnetic(el)));
+        all("[data-spotlight]").forEach((el) => cleanups.push(spotlight(el)));
         return () => cleanups.forEach((fn) => fn());
       });
     },

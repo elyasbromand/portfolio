@@ -6,17 +6,6 @@
   padding: 0 32px;
 }
 
-/* Fixed Nav layer: full-width but click-through; only the <nav> bar itself
-   (inside the same max-width container as the content) takes pointer events. */
-.navLayer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 10;
-  pointer-events: none;
-}
-
 .navSpacer {
   height: var(--nav-h);
 }

@@ -21,13 +21,20 @@ export const offset = { desktop: 32, mobile: 16 };
 /** Durations/delays are scaled by this on mobile. */
 export const MOBILE_TIME_SCALE = 0.8;
 
-/** Conditions object for `gsap.matchMedia().add(mq, ...)`. */
+/**
+ * Conditions for `gsap.matchMedia().add({...}, fn)`. GOTCHA (found building
+ * Nav): with a conditions object, `fn` only runs while AT LEAST ONE condition
+ * matches — so never pass `{ reduceMotion }` alone (it would never run for
+ * anyone without that preference set); pair it with `motionOK`, and pair
+ * width queries so every size is covered.
+ */
 export const mq = {
   isDesktop: "(min-width: 861px)",
   isMobile: "(max-width: 860px)",
   isPhone: "(max-width: 640px)",
   canHover: "(hover: hover) and (pointer: fine)",
   reduceMotion: "(prefers-reduced-motion: reduce)",
+  motionOK: "(prefers-reduced-motion: no-preference)",
 };
 
 export interface MotionConditions {
