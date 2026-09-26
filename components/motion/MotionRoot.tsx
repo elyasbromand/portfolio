@@ -40,6 +40,49 @@ export default function MotionRoot({ children }: { children: React.ReactNode }) 
       const all = (sel: string) => Array.from(root.querySelectorAll<HTMLElement>(sel));
       const mm = gsap.matchMedia();
 
+      // `data-reveal="lines"` gets its own branch, keyed only on reduced
+      // motion (not the isMobile/isDesktop width crossing the other reveals
+      // use). SplitText's `autoSplit` already re-splits on resize/font-load
+      // internally — recreating the whole SplitText instance *again* every
+      // time the 860px breakpoint is crossed raced with that internal
+      // resplit and crashed ScrollTrigger (a stale trigger's `.end` went
+      // undefined, escalating to a stack overflow on the next resize;
+      // reproduced by using the phone menu then resizing past 860px). Letting
+      // autoSplit own every future resplit, and reading the current
+      // breakpoint fresh inside onSplit instead of from a frozen closure,
+      // avoids the double-instantiation entirely.
+      mm.add({ reduceMotion: mq.reduceMotion, motionOK: mq.motionOK }, (ctx) => {
+        const { reduceMotion } = ctx.conditions as Record<string, boolean>;
+        if (reduceMotion) return;
+
+        const delayOf = (el: HTMLElement) => parseFloat(el.dataset.revealDelay ?? "") || 0;
+        const onEnter = (el: HTMLElement): ScrollTrigger.Vars => ({ trigger: el, start: "top 85%", once: true });
+        const cleanups: Array<() => void> = [];
+
+        all('[data-reveal="lines"]').forEach((el) => {
+          const split = SplitText.create(el, {
+            type: "lines",
+            mask: "lines",
+            autoSplit: true, // re-split on font load / resize so lines stay correct
+            onSplit(self) {
+              const isMobile = window.matchMedia(mq.isMobile).matches;
+              gsap.set(el, { autoAlpha: 1 });
+              return gsap.from(self.lines, {
+                yPercent: 100,
+                duration: dur.lg * (isMobile ? MOBILE_TIME_SCALE : 1),
+                ease: ease.line,
+                stagger: isMobile ? 0.06 : stagger.base,
+                delay: delayOf(el) * (isMobile ? MOBILE_TIME_SCALE : 1),
+                scrollTrigger: onEnter(el),
+              });
+            },
+          });
+          cleanups.push(() => split.revert());
+        });
+
+        return () => cleanups.forEach((fn) => fn());
+      });
+
       mm.add(mq, (ctx) => {
         const c = ctx.conditions as unknown as MotionConditions;
         // Reduced motion: CSS already shows everything; add no motion at all.
@@ -88,24 +131,7 @@ export default function MotionRoot({ children }: { children: React.ReactNode }) 
             .to(el, { duration: 0.8, ease: "none", scrambleText: { text, chars: "01<>/_", speed: 0.6 } });
         });
 
-        all('[data-reveal="lines"]').forEach((el) => {
-          SplitText.create(el, {
-            type: "lines",
-            mask: "lines",
-            autoSplit: true, // re-split on font load / resize so lines stay correct
-            onSplit(self) {
-              gsap.set(el, { autoAlpha: 1 });
-              return gsap.from(self.lines, {
-                yPercent: 100,
-                duration: dur.lg * t,
-                ease: ease.line,
-                stagger: c.isMobile ? 0.06 : stagger.base,
-                delay: delayOf(el),
-                scrollTrigger: onEnter(el),
-              });
-            },
-          });
-        });
+        const cleanups: Array<() => void> = [];
 
         const items = all('[data-reveal="stagger"] [data-reveal-item]');
         if (items.length) {
@@ -121,12 +147,12 @@ export default function MotionRoot({ children }: { children: React.ReactNode }) 
           });
         }
 
-        if (!c.canHover) return;
-
         // Pointer effects — fine pointers only (never on touch).
-        const cleanups: Array<() => void> = [];
-        all("[data-magnetic]").forEach((el) => cleanups.push(magnetic(el)));
-        all("[data-spotlight]").forEach((el) => cleanups.push(spotlight(el)));
+        if (c.canHover) {
+          all("[data-magnetic]").forEach((el) => cleanups.push(magnetic(el)));
+          all("[data-spotlight]").forEach((el) => cleanups.push(spotlight(el)));
+        }
+
         return () => cleanups.forEach((fn) => fn());
       });
     },

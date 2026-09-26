@@ -7,7 +7,9 @@ interface SectionHeadingProps {
 
 /**
  * The "01 ── Selected work ──────" heading pattern repeated at the top of
- * Selected Work, Systems, API Showcase, Toolbox, and Experience.
+ * Selected Work, Systems, API Showcase, Toolbox, and Experience. Stays a
+ * server component — the `data-reveal` attributes are wired up by
+ * MotionRoot, so this one change animates every heading on both routes.
  */
 export default function SectionHeading({ index, title }: SectionHeadingProps) {
   return (
@@ -19,10 +21,11 @@ export default function SectionHeading({ index, title }: SectionHeadingProps) {
         marginBottom: 34,
       }}
     >
-      <span style={{ fontFamily: fonts.mono, fontSize: 13, color: "#7ee787" }}>
+      <span data-reveal="scramble" style={{ fontFamily: fonts.mono, fontSize: 13, color: "#7ee787" }}>
         {index}
       </span>
       <h2
+        data-reveal="lines"
         style={{
           fontFamily: fonts.display,
           fontWeight: 600,
@@ -33,7 +36,11 @@ export default function SectionHeading({ index, title }: SectionHeadingProps) {
       >
         {title}
       </h2>
-      <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.07)" }} />
+      <div
+        data-reveal="rule"
+        data-reveal-delay="0.15"
+        style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.07)" }}
+      />
     </div>
   );
 }

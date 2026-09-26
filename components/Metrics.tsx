@@ -1,19 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useRef } from "react";
 import { fonts } from "@/lib/fonts";
 import { hackathon } from "@/data/portfolio";
+import { useCountUp } from "@/lib/useCountUp";
 import type { GithubStats } from "@/lib/github";
 import styles from "./Metrics.module.css";
 
 interface MetricsProps {
   stats: GithubStats;
-}
-
-interface CountState {
-  publicRepos: number;
-  starsEarned: number;
-  contributions: number;
 }
 
 const SPARK_VIEWBOX_WIDTH = 260;
@@ -52,6 +47,7 @@ const statValueStyle: React.CSSProperties = {
   color: "#f4f6f7",
   lineHeight: 1,
   letterSpacing: "-0.02em",
+  fontVariantNumeric: "tabular-nums",
 };
 
 const statSubStyle: React.CSSProperties = {
@@ -61,40 +57,21 @@ const statSubStyle: React.CSSProperties = {
 };
 
 export default function Metrics({ stats }: MetricsProps) {
-  const [count, setCount] = useState<CountState>({
-    publicRepos: 0,
-    starsEarned: 0,
-    contributions: 0,
-  });
-  useEffect(() => {
-    const duration = 1400;
-    const start = performance.now();
-    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
-    let frame: number;
-
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / duration);
-      const e = ease(t);
-      setCount({
-        publicRepos: stats.publicRepos * e,
-        starsEarned: stats.starsEarned * e,
-        contributions: stats.contributions * e,
-      });
-      if (t < 1) frame = requestAnimationFrame(tick);
-    };
-    frame = requestAnimationFrame(tick);
-
-    return () => cancelAnimationFrame(frame);
-  }, [stats]);
+  // One shared trigger for all three counters: the cards always enter the
+  // viewport together as a single row, so there's no need for a ref per card.
+  const gridRef = useRef<HTMLDivElement>(null);
+  const publicRepos = useCountUp(stats.publicRepos, { ref: gridRef });
+  const contributions = useCountUp(stats.contributions, { ref: gridRef });
+  const starsEarned = useCountUp(stats.starsEarned, { ref: gridRef });
 
   const sparkPoints = buildSparkPoints(stats.recentActivity);
 
   return (
     <section style={{ padding: "8px 0 64px" }}>
-      <div className={styles.grid}>
+      <div ref={gridRef} className={styles.grid}>
         <div className={styles.card}>
           <div style={statLabelStyle}>Public repos</div>
-          <div style={statValueStyle}>{Math.round(count.publicRepos)}</div>
+          <div style={statValueStyle}>{Math.round(publicRepos)}</div>
           <div style={statSubStyle}>owned, not forked</div>
         </div>
 
@@ -119,7 +96,7 @@ export default function Metrics({ stats }: MetricsProps) {
               }}
             />
           </div>
-          <div style={statValueStyle}>{Math.round(count.contributions)}</div>
+          <div style={statValueStyle}>{Math.round(contributions)}</div>
           {sparkPoints.length ? (
             <svg
               viewBox={`0 0 ${SPARK_VIEWBOX_WIDTH} ${SPARK_VIEWBOX_HEIGHT}`}
@@ -155,7 +132,7 @@ export default function Metrics({ stats }: MetricsProps) {
 
         <div className={styles.card}>
           <div style={statLabelStyle}>Stars earned on GitHub</div>
-          <div style={statValueStyle}>{Math.round(count.starsEarned)}</div>
+          <div style={statValueStyle}>{Math.round(starsEarned)}</div>
           <div style={statSubStyle}>across public repos</div>
         </div>
 
