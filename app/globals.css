@@ -46,6 +46,19 @@ body {
   }
 }
 
+/* Hero's own load timeline (components/Hero.tsx + motion/HeroMotion.tsx)
+   uses the same hide-until-JS-runs gate as [data-reveal], under its own
+   attribute since it's a hand-built sequence, not the generic reveal engine. */
+[data-js] [data-hero] {
+  visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-js] [data-hero] {
+    visibility: visible;
+  }
+}
+
 /* data-spotlight: accent glow that follows the pointer (--mx/--my/--spot are
    set by MotionRoot, fine pointers only). */
 [data-spotlight] {

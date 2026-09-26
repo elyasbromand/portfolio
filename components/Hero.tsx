@@ -1,12 +1,22 @@
 import Image from "next/image";
 import { fonts } from "@/lib/fonts";
+import HeroMotion from "./motion/HeroMotion";
 import styles from "./Hero.module.css";
 
 export default function Hero() {
   return (
-    <header className={styles.grid}>
-      <div>
+    <HeroMotion className={styles.grid}>
+      {/* data-parallax (not data-hero): this wrapper only needs to be found
+          by the scroll-out parallax effect, not hidden-until-revealed —
+          [data-hero] is matched by the CSS reveal gate, and GSAP's autoAlpha
+          on a *child* sets visibility:inherit (not literally "visible"), so
+          if this ancestor itself were tagged [data-hero] and never directly
+          revealed, every child below would stay invisible forever, inheriting
+          its hidden state (found in testing: badge/h1/etc. never actually
+          became visible, and were consequently un-hoverable). */}
+      <div data-parallax="text">
         <div
+          data-hero="badge"
           style={{
             display: "inline-flex",
             alignItems: "center",
@@ -22,6 +32,7 @@ export default function Hero() {
           }}
         >
           <span
+            className={styles.dot}
             style={{
               width: 7,
               height: 7,
@@ -34,6 +45,7 @@ export default function Hero() {
         </div>
 
         <h1
+          data-hero="h1"
           style={{
             fontFamily: fonts.display,
             fontWeight: 600,
@@ -49,6 +61,7 @@ export default function Hero() {
         </h1>
 
         <p
+          data-hero="lead"
           style={{
             fontSize: 19,
             lineHeight: 1.6,
@@ -69,12 +82,18 @@ export default function Hero() {
             marginBottom: 40,
           }}
         >
-          // Information Systems, Senior Student · Kabul Polytechnic University
+          {/* "typed" and "caret" are separate elements, not parent/child —
+              HeroMotion clears and retypes "typed"'s textContent, which would
+              delete a child caret span along with the rest of the content. */}
+          <span data-hero="typed">// Information Systems, Senior Student · Kabul Polytechnic University</span>
+          <span data-hero="caret" className={styles.caret} aria-hidden="true" />
         </p>
 
-        <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+        <div data-hero="ctas" style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
           <a
             href="#work"
+            data-magnetic
+            className={styles.primaryCta}
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -89,7 +108,7 @@ export default function Hero() {
             }}
           >
             View selected work
-            <span style={{ color: "#7ee787" }}>→</span>
+            <span className={styles.arrow} style={{ color: "#7ee787" }}>→</span>
           </a>
           <a
             href="#contact"
@@ -113,6 +132,7 @@ export default function Hero() {
       {/* PORTRAIT */}
       <div className={styles.portrait} style={{ position: "relative", width: "100%", maxWidth: 340 }}>
         <div
+          data-hero="border"
           style={{
             position: "absolute",
             inset: -1,
@@ -123,6 +143,8 @@ export default function Hero() {
           }}
         />
         <div
+          data-hero="frame"
+          data-spotlight
           style={{
             position: "relative",
             aspectRatio: "4 / 5",
@@ -133,6 +155,7 @@ export default function Hero() {
           }}
         >
           <Image
+            data-hero="image"
             src="/portrait.jpeg"
             alt="Portrait of Elyas Bromand"
             fill
@@ -142,6 +165,7 @@ export default function Hero() {
           />
         </div>
         <div
+          data-hero="tag"
           style={{
             position: "absolute",
             left: 14,
@@ -163,6 +187,6 @@ export default function Hero() {
           elyas.bromand
         </div>
       </div>
-    </header>
+    </HeroMotion>
   );
 }
